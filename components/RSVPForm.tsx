@@ -1,18 +1,88 @@
 'use client';
 
-import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Send, CheckCircle, AlertCircle, Heart, Music } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Send, CheckCircle, AlertCircle, Heart, ChevronDown, ChevronRight } from 'lucide-react';
 
 interface FormData {
   name: string;
   email: string;
   attending: string;
   guestCount: string;
-  mealPreference: string;
-  dietaryRestrictions: string;
-  songRequest: string;
+  selectedEvents: string[];
   message: string;
+}
+
+// Event structure
+const EVENTS = {
+  bangalore: {
+    label: 'All Bangalore Events',
+    events: [
+      { id: 'cocktail', label: 'Cocktail Party' },
+      { id: 'reception', label: 'Reception' },
+    ],
+  },
+  kolkata: {
+    label: 'All Kolkata Events',
+    events: [
+      { id: 'mehendi', label: 'Mehendi' },
+      { id: 'haldi', label: 'Haldi' },
+      { id: 'yaar-di-shaadi', label: 'Yaar Di Shaadi' },
+    ],
+  },
+};
+
+const ALL_EVENT_IDS = [
+  ...EVENTS.bangalore.events.map(e => e.id),
+  ...EVENTS.kolkata.events.map(e => e.id),
+];
+
+// Confetti particle component
+function ConfettiParticle({ delay, color }: { delay: number; color: string }) {
+  const randomX = Math.random() * 100;
+  const randomRotation = Math.random() * 360;
+
+  return (
+    <motion.div
+      className="absolute w-2 h-2 rounded-sm"
+      style={{
+        backgroundColor: color,
+        left: `${randomX}%`,
+        top: '-10px',
+      }}
+      initial={{ y: 0, opacity: 1, rotate: 0, scale: 1 }}
+      animate={{
+        y: [0, 400],
+        opacity: [1, 1, 0],
+        rotate: [0, randomRotation + 360],
+        x: [0, (Math.random() - 0.5) * 100],
+        scale: [1, 0.5],
+      }}
+      transition={{
+        duration: 2.5,
+        delay,
+        ease: 'easeOut',
+      }}
+    />
+  );
+}
+
+// Confetti component
+function Confetti() {
+  const colors = ['#E8D5D3', '#7BA3B5', '#C9B896', '#F8F0EE', '#A8D5BA'];
+  const particles = Array.from({ length: 30 }, (_, i) => ({
+    id: i,
+    delay: Math.random() * 0.5,
+    color: colors[Math.floor(Math.random() * colors.length)],
+  }));
+
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none z-20">
+      {particles.map((particle) => (
+        <ConfettiParticle key={particle.id} delay={particle.delay} color={particle.color} />
+      ))}
+    </div>
+  );
 }
 
 export default function RSVPForm() {
@@ -21,12 +91,12 @@ export default function RSVPForm() {
     email: '',
     attending: '',
     guestCount: '1',
-    mealPreference: '',
-    dietaryRestrictions: '',
-    songRequest: '',
+    selectedEvents: [],
     message: '',
   });
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set());
+  const [showConfetti, setShowConfetti] = useState(false);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
@@ -50,14 +120,17 @@ export default function RSVPForm() {
 
       if (response.ok) {
         setStatus('success');
+        // Show confetti only if attending
+        if (formData.attending === 'Joyfully Accepts') {
+          setShowConfetti(true);
+          setTimeout(() => setShowConfetti(false), 3000);
+        }
         setFormData({
           name: '',
           email: '',
           attending: '',
           guestCount: '1',
-          mealPreference: '',
-          dietaryRestrictions: '',
-          songRequest: '',
+          selectedEvents: [],
           message: '',
         });
       } else {
@@ -79,6 +152,7 @@ export default function RSVPForm() {
           border: '1px solid rgba(201, 184, 150, 0.4)',
         }}
       >
+        {showConfetti && <Confetti />}
         <motion.div
           animate={{ scale: [1, 1.05, 1] }}
           transition={{ duration: 2, repeat: Infinity }}
@@ -209,81 +283,206 @@ export default function RSVPForm() {
           animate={{ opacity: 1, height: 'auto' }}
           className="space-y-6"
         >
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Guest Count */}
-            <div>
-              <label htmlFor="guestCount" className="block text-sm font-medium mb-2" style={{ color: '#3D3D3D' }}>
-                Number of Guests
-              </label>
-              <select
-                id="guestCount"
-                name="guestCount"
-                value={formData.guestCount}
-                onChange={handleChange}
-                className="input-elegant w-full"
-              >
-                {[1, 2, 3, 4, 5].map((num) => (
-                  <option key={num} value={num}>
-                    {num} {num === 1 ? 'Guest' : 'Guests'}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Meal Preference */}
-            <div>
-              <label htmlFor="mealPreference" className="block text-sm font-medium mb-2" style={{ color: '#3D3D3D' }}>
-                Meal Preference
-              </label>
-              <select
-                id="mealPreference"
-                name="mealPreference"
-                value={formData.mealPreference}
-                onChange={handleChange}
-                className="input-elegant w-full"
-              >
-                <option value="">Select an option</option>
-                <option value="vegetarian">Vegetarian</option>
-                <option value="non-vegetarian">Non-Vegetarian</option>
-                <option value="vegan">Vegan</option>
-                <option value="jain">Jain</option>
-              </select>
-            </div>
+          {/* Guest Count */}
+          <div>
+            <label htmlFor="guestCount" className="block text-sm font-medium mb-2" style={{ color: '#3D3D3D' }}>
+              Number of Guests
+            </label>
+            <select
+              id="guestCount"
+              name="guestCount"
+              value={formData.guestCount}
+              onChange={handleChange}
+              className="input-elegant w-full md:w-48"
+            >
+              {[1, 2, 3, 4, 5].map((num) => (
+                <option key={num} value={num}>
+                  {num} {num === 1 ? 'Guest' : 'Guests'}
+                </option>
+              ))}
+            </select>
           </div>
 
-          {/* Dietary Restrictions */}
+          {/* Event Selection */}
           <div>
-            <label htmlFor="dietaryRestrictions" className="block text-sm font-medium mb-2" style={{ color: '#3D3D3D' }}>
-              Dietary Restrictions or Allergies
+            <label className="block text-sm font-medium mb-3" style={{ color: '#3D3D3D' }}>
+              Which events will you be attending?
             </label>
-            <input
-              type="text"
-              id="dietaryRestrictions"
-              name="dietaryRestrictions"
-              value={formData.dietaryRestrictions}
-              onChange={handleChange}
-              className="input-elegant w-full"
-              placeholder="Please list any dietary restrictions"
-            />
-          </div>
+            <div
+              className="rounded-lg p-4"
+              style={{
+                background: 'rgba(255, 254, 249, 0.9)',
+                border: '1px solid rgba(201, 184, 150, 0.4)',
+              }}
+            >
+              {/* All Events */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const newExpanded = new Set(expandedSections);
+                      if (newExpanded.has('all')) {
+                        newExpanded.delete('all');
+                      } else {
+                        newExpanded.add('all');
+                      }
+                      setExpandedSections(newExpanded);
+                    }}
+                    className="p-1 rounded hover:bg-gray-100 transition-colors"
+                  >
+                    {expandedSections.has('all') ? (
+                      <ChevronDown className="w-4 h-4" style={{ color: '#7BA3B5' }} />
+                    ) : (
+                      <ChevronRight className="w-4 h-4" style={{ color: '#7BA3B5' }} />
+                    )}
+                  </button>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={formData.selectedEvents.length === ALL_EVENT_IDS.length}
+                      ref={(el) => {
+                        if (el) {
+                          el.indeterminate =
+                            formData.selectedEvents.length > 0 &&
+                            formData.selectedEvents.length < ALL_EVENT_IDS.length;
+                        }
+                      }}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setFormData((prev) => ({ ...prev, selectedEvents: [...ALL_EVENT_IDS] }));
+                        } else {
+                          setFormData((prev) => ({ ...prev, selectedEvents: [] }));
+                        }
+                      }}
+                      className="w-4 h-4 rounded"
+                      style={{ accentColor: '#7BA3B5' }}
+                    />
+                    <span className="font-medium" style={{ color: '#3D3D3D' }}>All Events</span>
+                  </label>
+                </div>
 
-          {/* Song Request */}
-          <div>
-            <label htmlFor="songRequest" className="block text-sm font-medium mb-2" style={{ color: '#3D3D3D' }}>
-              <span className="flex items-center gap-2">
-                Song Request
-                <Music className="w-4 h-4" style={{ color: '#7BA3B5' }} />
-              </span>
-            </label>
-            <input
-              type="text"
-              id="songRequest"
-              name="songRequest"
-              value={formData.songRequest}
-              onChange={handleChange}
-              className="input-elegant w-full"
-              placeholder="What song will get you on the dance floor?"
-            />
+                {/* City sections */}
+                <AnimatePresence>
+                  {expandedSections.has('all') && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      className="ml-6 space-y-2 overflow-hidden"
+                    >
+                      {Object.entries(EVENTS).map(([cityKey, city]) => {
+                        const cityEventIds = city.events.map((e) => e.id);
+                        const selectedCityEvents = formData.selectedEvents.filter((id) =>
+                          cityEventIds.includes(id)
+                        );
+                        const allCitySelected = selectedCityEvents.length === cityEventIds.length;
+                        const someCitySelected = selectedCityEvents.length > 0 && !allCitySelected;
+
+                        return (
+                          <div key={cityKey} className="space-y-1">
+                            <div className="flex items-center gap-2">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const newExpanded = new Set(expandedSections);
+                                  if (newExpanded.has(cityKey)) {
+                                    newExpanded.delete(cityKey);
+                                  } else {
+                                    newExpanded.add(cityKey);
+                                  }
+                                  setExpandedSections(newExpanded);
+                                }}
+                                className="p-1 rounded hover:bg-gray-100 transition-colors"
+                              >
+                                {expandedSections.has(cityKey) ? (
+                                  <ChevronDown className="w-4 h-4" style={{ color: '#7BA3B5' }} />
+                                ) : (
+                                  <ChevronRight className="w-4 h-4" style={{ color: '#7BA3B5' }} />
+                                )}
+                              </button>
+                              <label className="flex items-center gap-2 cursor-pointer">
+                                <input
+                                  type="checkbox"
+                                  checked={allCitySelected}
+                                  ref={(el) => {
+                                    if (el) {
+                                      el.indeterminate = someCitySelected;
+                                    }
+                                  }}
+                                  onChange={(e) => {
+                                    if (e.target.checked) {
+                                      setFormData((prev) => ({
+                                        ...prev,
+                                        selectedEvents: [
+                                          ...new Set([...prev.selectedEvents, ...cityEventIds]),
+                                        ],
+                                      }));
+                                    } else {
+                                      setFormData((prev) => ({
+                                        ...prev,
+                                        selectedEvents: prev.selectedEvents.filter(
+                                          (id) => !cityEventIds.includes(id)
+                                        ),
+                                      }));
+                                    }
+                                  }}
+                                  className="w-4 h-4 rounded"
+                                  style={{ accentColor: '#7BA3B5' }}
+                                />
+                                <span style={{ color: '#3D3D3D' }}>{city.label}</span>
+                              </label>
+                            </div>
+
+                            {/* Individual events */}
+                            <AnimatePresence>
+                              {expandedSections.has(cityKey) && (
+                                <motion.div
+                                  initial={{ opacity: 0, height: 0 }}
+                                  animate={{ opacity: 1, height: 'auto' }}
+                                  exit={{ opacity: 0, height: 0 }}
+                                  className="ml-10 space-y-1 overflow-hidden"
+                                >
+                                  {city.events.map((event) => (
+                                    <label
+                                      key={event.id}
+                                      className="flex items-center gap-2 cursor-pointer py-1"
+                                    >
+                                      <input
+                                        type="checkbox"
+                                        checked={formData.selectedEvents.includes(event.id)}
+                                        onChange={(e) => {
+                                          if (e.target.checked) {
+                                            setFormData((prev) => ({
+                                              ...prev,
+                                              selectedEvents: [...prev.selectedEvents, event.id],
+                                            }));
+                                          } else {
+                                            setFormData((prev) => ({
+                                              ...prev,
+                                              selectedEvents: prev.selectedEvents.filter(
+                                                (id) => id !== event.id
+                                              ),
+                                            }));
+                                          }
+                                        }}
+                                        className="w-4 h-4 rounded"
+                                        style={{ accentColor: '#7BA3B5' }}
+                                      />
+                                      <span style={{ color: '#6B6B6B' }}>{event.label}</span>
+                                    </label>
+                                  ))}
+                                </motion.div>
+                              )}
+                            </AnimatePresence>
+                          </div>
+                        );
+                      })}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            </div>
           </div>
         </motion.div>
       )}

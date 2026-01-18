@@ -1,6 +1,7 @@
 'use client';
 
-import { Heart, Mail, MapPin } from 'lucide-react';
+import Link from 'next/link';
+import { Heart } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function Footer() {
@@ -26,11 +27,6 @@ export default function Footer() {
             <h3 className="font-script text-4xl mb-4" style={{ color: '#3D3D3D' }}>
               Deepi & Harsh
             </h3>
-            <p className="text-sm leading-relaxed" style={{ color: '#6B6B6B' }}>
-              December 12, 2026
-              <br />
-              The Garden Estate, Napa Valley
-            </p>
             {/* Decorative element */}
             <div className="flex items-center gap-2 mt-4 justify-center md:justify-start">
               <div className="h-px w-8" style={{ background: 'linear-gradient(to right, transparent, #C9B896)' }} />
@@ -39,30 +35,41 @@ export default function Footer() {
             </div>
           </motion.div>
 
-          {/* Contact */}
+          {/* Quick Links - Center column */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="text-center md:text-right"
+            className="text-center"
           >
-            <h4 className="font-serif text-lg mb-4" style={{ color: '#3D3D3D' }}>Get In Touch</h4>
-            <div className="space-y-2 text-sm">
-              <a
-                href="mailto:wedding@deepiandharsh.com"
-                className="flex items-center justify-center md:justify-end gap-2 transition-all duration-300 hover:text-dusty-500"
-                style={{ color: '#6B6B6B' }}
-              >
-                <Mail className="w-4 h-4" style={{ color: '#7BA3B5' }} />
-                wedding@deepiandharsh.com
-              </a>
-              <div className="flex items-center justify-center md:justify-end gap-2" style={{ color: '#6B6B6B' }}>
-                <MapPin className="w-4 h-4" style={{ color: '#7BA3B5' }} />
-                Napa Valley, California
-              </div>
+            <h4 className="font-serif text-lg mb-4" style={{ color: '#3D3D3D' }}>Quick Links</h4>
+            <div className="flex flex-wrap justify-center gap-x-4 gap-y-2 text-sm">
+              {[
+                { href: '/our-story', label: 'Our Story' },
+                { href: '/events', label: 'Events' },
+                { href: '/rsvp', label: 'RSVP' },
+                { href: '/registry', label: 'Registry' },
+                { href: '/faq', label: 'FAQ' },
+              ].map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="transition-all duration-300 hover:text-dusty-500 relative group"
+                  style={{ color: '#6B6B6B' }}
+                >
+                  {link.label}
+                  <span
+                    className="absolute -bottom-1 left-0 w-0 h-px group-hover:w-full transition-all duration-300"
+                    style={{ background: '#7BA3B5' }}
+                  />
+                </Link>
+              ))}
             </div>
           </motion.div>
+
+          {/* Empty third column to maintain layout */}
+          <div className="hidden md:block" />
         </div>
 
         {/* Divider */}
@@ -85,7 +92,7 @@ export default function Footer() {
               </motion.span>{' '}
               for our special day
             </p>
-            <p>© 2026 Deepi & Harsh Wedding</p>
+            <p>© 2026 Deepi-ka-Harsh</p>
           </div>
         </div>
       </div>
