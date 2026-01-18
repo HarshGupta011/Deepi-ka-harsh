@@ -102,9 +102,9 @@ const config: Config = {
         },
       },
       fontFamily: {
-        serif: ['Playfair Display', 'Georgia', 'serif'],
-        sans: ['Lato', 'Helvetica', 'Arial', 'sans-serif'],
-        script: ['Great Vibes', 'cursive'],
+        serif: ['Nothing You Could Do', 'cursive'],
+        sans: ['Source Code Pro', 'monospace'],
+        script: ['Nothing You Could Do', 'cursive'],
       },
       animation: {
         'fade-in': 'fadeIn 1s ease-out',

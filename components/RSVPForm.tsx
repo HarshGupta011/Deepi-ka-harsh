@@ -4,11 +4,18 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, CheckCircle, AlertCircle, Heart, ChevronDown, ChevronRight } from 'lucide-react';
 
+interface Guest {
+  firstName: string;
+  lastName: string;
+}
+
 interface FormData {
-  name: string;
+  firstName: string;
+  lastName: string;
   email: string;
   attending: string;
   guestCount: string;
+  guests: Guest[];
   selectedEvents: string[];
   message: string;
 }
@@ -87,10 +94,12 @@ function Confetti() {
 
 export default function RSVPForm() {
   const [formData, setFormData] = useState<FormData>({
-    name: '',
+    firstName: '',
+    lastName: '',
     email: '',
     attending: '',
     guestCount: '1',
+    guests: [],
     selectedEvents: [],
     message: '',
   });
@@ -98,11 +107,41 @@ export default function RSVPForm() {
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set());
   const [showConfetti, setShowConfetti] = useState(false);
 
+  // Update guests array when guestCount changes
+  useEffect(() => {
+    const count = parseInt(formData.guestCount);
+    const additionalGuests = count - 1; // Subtract 1 for the main person
+
+    setFormData((prev) => {
+      const currentGuests = prev.guests;
+      if (additionalGuests > currentGuests.length) {
+        // Add more guest slots
+        const newGuests = [...currentGuests];
+        for (let i = currentGuests.length; i < additionalGuests; i++) {
+          newGuests.push({ firstName: '', lastName: '' });
+        }
+        return { ...prev, guests: newGuests };
+      } else if (additionalGuests < currentGuests.length) {
+        // Remove extra guest slots
+        return { ...prev, guests: currentGuests.slice(0, additionalGuests) };
+      }
+      return prev;
+    });
+  }, [formData.guestCount]);
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleGuestChange = (index: number, field: 'firstName' | 'lastName', value: string) => {
+    setFormData((prev) => {
+      const newGuests = [...prev.guests];
+      newGuests[index] = { ...newGuests[index], [field]: value };
+      return { ...prev, guests: newGuests };
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -126,10 +165,12 @@ export default function RSVPForm() {
           setTimeout(() => setShowConfetti(false), 3000);
         }
         setFormData({
-          name: '',
+          firstName: '',
+          lastName: '',
           email: '',
           attending: '',
           guestCount: '1',
+          guests: [],
           selectedEvents: [],
           message: '',
         });
@@ -208,39 +249,56 @@ export default function RSVPForm() {
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Name */}
+        {/* First Name */}
         <div>
-          <label htmlFor="name" className="block text-sm font-medium mb-2" style={{ color: '#3D3D3D' }}>
-            Full Name *
+          <label htmlFor="firstName" className="block text-sm font-medium mb-2" style={{ color: '#3D3D3D' }}>
+            First Name *
           </label>
           <input
             type="text"
-            id="name"
-            name="name"
+            id="firstName"
+            name="firstName"
             required
-            value={formData.name}
+            value={formData.firstName}
             onChange={handleChange}
             className="input-elegant w-full"
-            placeholder="Your full name"
+            placeholder="Your first name"
           />
         </div>
 
-        {/* Email */}
+        {/* Last Name */}
         <div>
-          <label htmlFor="email" className="block text-sm font-medium mb-2" style={{ color: '#3D3D3D' }}>
-            Email Address *
+          <label htmlFor="lastName" className="block text-sm font-medium mb-2" style={{ color: '#3D3D3D' }}>
+            Last Name *
           </label>
           <input
-            type="email"
-            id="email"
-            name="email"
+            type="text"
+            id="lastName"
+            name="lastName"
             required
-            value={formData.email}
+            value={formData.lastName}
             onChange={handleChange}
             className="input-elegant w-full"
-            placeholder="your@email.com"
+            placeholder="Your last name"
           />
         </div>
+      </div>
+
+      {/* Email */}
+      <div>
+        <label htmlFor="email" className="block text-sm font-medium mb-2" style={{ color: '#3D3D3D' }}>
+          Email Address *
+        </label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          required
+          value={formData.email}
+          onChange={handleChange}
+          className="input-elegant w-full"
+          placeholder="your@email.com"
+        />
       </div>
 
       {/* Attending */}
@@ -302,6 +360,71 @@ export default function RSVPForm() {
               ))}
             </select>
           </div>
+
+          {/* Additional Guest Names */}
+          <AnimatePresence>
+            {formData.guests.length > 0 && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                className="space-y-4"
+              >
+                {formData.guests.map((guest, index) => (
+                  <div
+                    key={index}
+                    className="p-4 rounded-lg"
+                    style={{
+                      background: 'rgba(255, 254, 249, 0.9)',
+                      border: '1px solid rgba(201, 184, 150, 0.4)',
+                    }}
+                  >
+                    <p className="text-sm font-medium mb-3" style={{ color: '#7BA3B5' }}>
+                      Guest {index + 2}
+                    </p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label
+                          htmlFor={`guest-${index}-firstName`}
+                          className="block text-sm font-medium mb-2"
+                          style={{ color: '#3D3D3D' }}
+                        >
+                          First Name *
+                        </label>
+                        <input
+                          type="text"
+                          id={`guest-${index}-firstName`}
+                          required
+                          value={guest.firstName}
+                          onChange={(e) => handleGuestChange(index, 'firstName', e.target.value)}
+                          className="input-elegant w-full"
+                          placeholder="First name"
+                        />
+                      </div>
+                      <div>
+                        <label
+                          htmlFor={`guest-${index}-lastName`}
+                          className="block text-sm font-medium mb-2"
+                          style={{ color: '#3D3D3D' }}
+                        >
+                          Last Name *
+                        </label>
+                        <input
+                          type="text"
+                          id={`guest-${index}-lastName`}
+                          required
+                          value={guest.lastName}
+                          onChange={(e) => handleGuestChange(index, 'lastName', e.target.value)}
+                          className="input-elegant w-full"
+                          placeholder="Last name"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {/* Event Selection */}
           <div>

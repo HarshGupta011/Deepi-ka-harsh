@@ -75,7 +75,7 @@ export default function RSVPPage() {
     <>
       {/* Hero Section - Blush Pastel */}
       <section
-        className="relative py-24 md:py-32 overflow-hidden"
+        className="relative py-12 md:py-16 overflow-hidden"
         style={{
           background: '#F8F0EE',
         }}
@@ -112,7 +112,7 @@ export default function RSVPPage() {
               RSVP
             </h1>
             <p className="text-lg md:text-xl leading-relaxed" style={{ color: '#6B6B6B' }}>
-              We can&apos;t wait to celebrate with you! Please let us know if you&apos;ll be able to join us.
+              If it were up to us, attendance would be mandatory—we can&apos;t imagine celebrating without you. But since we&apos;re polite, please let us know if you can make it.
             </p>
 
             <ElegantDivider variant="line" className="mt-8" />

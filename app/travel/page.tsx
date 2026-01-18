@@ -60,7 +60,7 @@ export default function TravelPage() {
     <>
       {/* Hero Section - Dusty Blue Pastel */}
       <section
-        className="relative py-24 md:py-32 overflow-hidden"
+        className="relative py-12 md:py-16 overflow-hidden"
         style={{
           background: '#E5EFF3',
         }}

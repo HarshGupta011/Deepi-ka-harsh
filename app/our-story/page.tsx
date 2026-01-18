@@ -57,7 +57,7 @@ export default function OurStoryPage() {
     <>
       {/* Hero Section with User's Photo */}
       <section
-        className="relative py-24 md:py-36 overflow-hidden"
+        className="relative py-12 md:py-16 overflow-hidden"
       >
         {/* Background Image with Overlay */}
         <div className="absolute inset-0">
