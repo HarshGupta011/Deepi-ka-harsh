@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import { Heart, Mail, MapPin } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -16,7 +15,7 @@ export default function Footer() {
       />
 
       <div className="container-wedding py-12 md:py-16 relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
           {/* Brand */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -28,7 +27,7 @@ export default function Footer() {
               Deepi & Harsh
             </h3>
             <p className="text-sm leading-relaxed" style={{ color: '#6B6B6B' }}>
-              June 15, 2025
+              December 12, 2026
               <br />
               The Garden Estate, Napa Valley
             </p>
@@ -40,45 +39,12 @@ export default function Footer() {
             </div>
           </motion.div>
 
-          {/* Quick Links */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
-            className="text-center"
-          >
-            <h4 className="font-serif text-lg mb-4" style={{ color: '#3D3D3D' }}>Quick Links</h4>
-            <div className="flex flex-wrap justify-center gap-x-4 gap-y-2 text-sm">
-              {[
-                { href: '/our-story', label: 'Our Story' },
-                { href: '/events', label: 'Events' },
-                { href: '/rsvp', label: 'RSVP' },
-                { href: '/registry', label: 'Registry' },
-                { href: '/faq', label: 'FAQ' },
-              ].map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className="transition-all duration-300 hover:text-dusty-500 relative group"
-                  style={{ color: '#6B6B6B' }}
-                >
-                  {link.label}
-                  <span
-                    className="absolute -bottom-1 left-0 w-0 h-px group-hover:w-full transition-all duration-300"
-                    style={{ background: '#7BA3B5' }}
-                  />
-                </Link>
-              ))}
-            </div>
-          </motion.div>
-
           {/* Contact */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
+            transition={{ delay: 0.1 }}
             className="text-center md:text-right"
           >
             <h4 className="font-serif text-lg mb-4" style={{ color: '#3D3D3D' }}>Get In Touch</h4>
@@ -119,7 +85,7 @@ export default function Footer() {
               </motion.span>{' '}
               for our special day
             </p>
-            <p>© 2025 Deepi & Harsh Wedding</p>
+            <p>© 2026 Deepi & Harsh Wedding</p>
           </div>
         </div>
       </div>

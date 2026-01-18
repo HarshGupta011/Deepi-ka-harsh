@@ -24,9 +24,12 @@ export default function Home() {
 
       {/* Main Content (Home Page) */}
       <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: isOpen ? 1 : 0 }}
-        transition={{ delay: 0.3, duration: 0.5 }}
+        initial={{ opacity: 0.5, filter: 'blur(6px)' }}
+        animate={{
+          opacity: isOpen ? 1 : 0.5,
+          filter: isOpen ? 'blur(0px)' : 'blur(6px)'
+        }}
+        transition={{ duration: 0.6, ease: 'easeOut' }}
       >
         {/* Hero Section - Clean & Minimal like reference */}
         <section className="relative h-screen flex items-end justify-center pb-20 md:pb-32 overflow-hidden">
@@ -67,7 +70,7 @@ export default function Home() {
                 textShadow: '0 1px 5px rgba(0,0,0,0.3)',
               }}
             >
-              December 12, 2025 | Kolkata
+              December 12, 2026 | Kolkata
             </motion.p>
           </div>
         </section>
@@ -147,11 +150,11 @@ export default function Home() {
           {/* Background Image */}
           <div className="absolute inset-0">
             <Image
-              src="/images/hills-background.jpg"
+              src="/images/misty-hills.jpg"
               alt="Hills background"
               fill
               className="object-cover"
-              style={{ objectPosition: 'center 0%' }}
+              style={{ objectPosition: 'center' }}
             />
             {/* Soft overlay */}
             <div
@@ -208,11 +211,17 @@ export default function Home() {
                     />
                   </div>
                   <h3
-                    className="font-names text-2xl md:text-3xl"
+                    className="font-names text-2xl md:text-3xl mb-2"
                     style={{ color: '#3D3D3D', textShadow: '0 2px 8px rgba(255,255,255,0.8)' }}
                   >
                     Kolkata
                   </h3>
+                  <p
+                    className="text-sm md:text-base leading-relaxed font-medium"
+                    style={{ color: '#3D3D3D', fontFamily: "'Source Code Pro', monospace", textShadow: '0 2px 6px rgba(255,255,255,0.9)' }}
+                  >
+                    ancient architecture, late-night conversations, sweets after every meal
+                  </p>
                 </Link>
 
                 {/* Bangalore */}
@@ -227,11 +236,17 @@ export default function Home() {
                     />
                   </div>
                   <h3
-                    className="font-names text-2xl md:text-3xl"
+                    className="font-names text-2xl md:text-3xl mb-2"
                     style={{ color: '#3D3D3D', textShadow: '0 2px 8px rgba(255,255,255,0.8)' }}
                   >
                     Bangalore
                   </h3>
+                  <p
+                    className="text-sm md:text-base leading-relaxed font-medium"
+                    style={{ color: '#3D3D3D', fontFamily: "'Source Code Pro', monospace", textShadow: '0 2px 6px rgba(255,255,255,0.9)' }}
+                  >
+                    tech hub, weekday dosas, a new bar to try every weekend
+                  </p>
                 </Link>
               </div>
             </motion.div>

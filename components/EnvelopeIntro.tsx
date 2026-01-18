@@ -12,11 +12,9 @@ export default function EnvelopeIntro({ onOpen, videoSrc = '/assets/intro-video.
   const [isOpening, setIsOpening] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [videoError, setVideoError] = useState(false);
-  const [showPetals, setShowPetals] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const handleClick = () => {
-    setShowPetals(true);
     if (videoRef.current && !videoError) {
       setIsOpening(true);
       videoRef.current.play().catch(() => {
@@ -32,12 +30,14 @@ export default function EnvelopeIntro({ onOpen, videoSrc = '/assets/intro-video.
     setIsOpening(true);
     setTimeout(() => {
       setIsVisible(false);
-      setTimeout(onOpen, 300);
-    }, 1200);
+      window.scrollTo(0, 0);
+      setTimeout(onOpen, 200);
+    }, 700);
   };
 
   const handleVideoEnd = () => {
     setIsVisible(false);
+    window.scrollTo(0, 0);
     setTimeout(onOpen, 300);
   };
 
@@ -63,45 +63,14 @@ export default function EnvelopeIntro({ onOpen, videoSrc = '/assets/intro-video.
         <motion.div
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.3 }}
           className="fixed inset-0 z-50 cursor-pointer overflow-hidden"
           onClick={!isOpening ? handleClick : undefined}
           style={{
-            background: '#F8F0EE',
+            background: 'rgba(248, 240, 238, 0.85)',
+            backdropFilter: 'blur(8px)',
           }}
         >
-
-          {/* Soft Petal Animation on Click */}
-          <AnimatePresence>
-            {showPetals && (
-              <>
-                {[...Array(15)].map((_, i) => (
-                  <motion.div
-                    key={i}
-                    className="absolute w-3 h-3 rounded-full"
-                    style={{
-                      left: '50%',
-                      top: '50%',
-                      background: i % 3 === 0 ? '#E8D5D3' : i % 3 === 1 ? '#A8C5D1' : '#B8C9A9',
-                      opacity: 0.6,
-                    }}
-                    initial={{ scale: 0, x: 0, y: 0 }}
-                    animate={{
-                      scale: [0, 1, 0.5],
-                      x: (Math.random() - 0.5) * 300,
-                      y: (Math.random() - 0.5) * 300,
-                      opacity: [0, 0.7, 0],
-                    }}
-                    transition={{
-                      duration: 1.5,
-                      delay: i * 0.03,
-                      ease: 'easeOut',
-                    }}
-                  />
-                ))}
-              </>
-            )}
-          </AnimatePresence>
 
           {/* Video Layer */}
           {!videoError && (
@@ -125,7 +94,7 @@ export default function EnvelopeIntro({ onOpen, videoSrc = '/assets/intro-video.
                 x: isOpening ? '-100%' : 0,
               }}
               transition={{
-                duration: 1,
+                duration: 0.6,
                 ease: [0.4, 0, 0.2, 1],
               }}
             >
@@ -147,7 +116,7 @@ export default function EnvelopeIntro({ onOpen, videoSrc = '/assets/intro-video.
                 x: isOpening ? '100%' : 0,
               }}
               transition={{
-                duration: 1,
+                duration: 0.6,
                 ease: [0.4, 0, 0.2, 1],
               }}
             >
