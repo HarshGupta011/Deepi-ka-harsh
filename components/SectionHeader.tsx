@@ -8,13 +8,15 @@ interface SectionHeaderProps {
   subtitle?: string;
   centered?: boolean;
   variant?: 'dusty-blue' | 'sage' | 'charcoal';
+  showHeart?: boolean;
 }
 
 export default function SectionHeader({
   title,
   subtitle,
   centered = true,
-  variant = 'charcoal'
+  variant = 'charcoal',
+  showHeart = true
 }: SectionHeaderProps) {
   const titleColors = {
     'dusty-blue': '#7BA3B5',
@@ -48,36 +50,38 @@ export default function SectionHeader({
       )}
 
       {/* Elegant divider */}
-      <motion.div
-        initial={{ opacity: 0, scaleX: 0 }}
-        whileInView={{ opacity: 1, scaleX: 1 }}
-        viewport={{ once: true }}
-        transition={{ delay: 0.2, duration: 0.6 }}
-        className="flex items-center justify-center gap-4 mt-6"
-      >
-        {/* Left line */}
-        <div
-          className="h-px w-12 md:w-20"
-          style={{
-            background: 'linear-gradient(to right, transparent, #C9B896)',
-          }}
-        />
+      {showHeart && (
+        <motion.div
+          initial={{ opacity: 0, scaleX: 0 }}
+          whileInView={{ opacity: 1, scaleX: 1 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.2, duration: 0.6 }}
+          className="flex items-center justify-center gap-4 mt-6"
+        >
+          {/* Left line */}
+          <div
+            className="h-px w-12 md:w-20"
+            style={{
+              background: 'linear-gradient(to right, transparent, #C9B896)',
+            }}
+          />
 
-        {/* Center heart */}
-        <Heart
-          className="w-4 h-4"
-          style={{ color: '#E8D5D3' }}
-          fill="currentColor"
-        />
+          {/* Center heart */}
+          <Heart
+            className="w-4 h-4"
+            style={{ color: '#E8D5D3' }}
+            fill="currentColor"
+          />
 
-        {/* Right line */}
-        <div
-          className="h-px w-12 md:w-20"
-          style={{
-            background: 'linear-gradient(to left, transparent, #C9B896)',
-          }}
-        />
-      </motion.div>
+          {/* Right line */}
+          <div
+            className="h-px w-12 md:w-20"
+            style={{
+              background: 'linear-gradient(to left, transparent, #C9B896)',
+            }}
+          />
+        </motion.div>
+      )}
     </motion.div>
   );
 }

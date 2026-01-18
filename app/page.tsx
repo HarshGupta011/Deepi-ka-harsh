@@ -220,7 +220,7 @@ export default function Home() {
                     className="text-sm md:text-base leading-relaxed font-medium"
                     style={{ color: '#3D3D3D', fontFamily: "'Source Code Pro', monospace", textShadow: '0 2px 6px rgba(255,255,255,0.9)' }}
                   >
-                    ancient architecture, late-night conversations, sweets after every meal
+                    ancient architecture, kaali-peeli taxis, sweets after every meal
                   </p>
                 </Link>
 

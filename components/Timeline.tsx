@@ -9,6 +9,7 @@ interface TimelineEvent {
   title: string;
   description: string;
   image?: string;
+  imagePosition?: string;
 }
 
 interface TimelineProps {
@@ -17,109 +18,130 @@ interface TimelineProps {
 
 export default function Timeline({ events }: TimelineProps) {
   return (
-    <div className="relative">
-      {/* Elegant Vertical Line with Champagne Gradient */}
+    <div className="relative max-w-6xl mx-auto">
+      {/* Center vertical line */}
       <div
-        className="absolute left-4 md:left-1/2 top-0 bottom-0 w-px md:-translate-x-1/2"
+        className="hidden md:block absolute left-1/2 top-0 bottom-0 w-px -translate-x-1/2"
         style={{
-          background: 'linear-gradient(180deg, transparent, #C9B896 10%, #C9B896 90%, transparent)',
+          background: 'linear-gradient(180deg, transparent, #C9B896 5%, #C9B896 95%, transparent)',
         }}
       />
 
-      {events.map((event, index) => (
-        <motion.div
-          key={index}
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-100px' }}
-          transition={{ duration: 0.6, delay: index * 0.1 }}
-          className={`relative flex flex-col md:flex-row items-start mb-12 md:mb-16 ${
-            index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'
-          }`}
-        >
-          {/* Timeline Dot */}
+      <div className="space-y-16 md:space-y-24">
+        {events.map((event, index) => (
           <motion.div
-            whileHover={{ scale: 1.1 }}
-            className="absolute left-4 md:left-1/2 w-10 h-10 -translate-x-1/2 rounded-full flex items-center justify-center z-10"
-            style={{
-              background: '#FFFEF9',
-              border: '2px solid #7BA3B5',
-              boxShadow: '0 4px 12px rgba(123, 163, 181, 0.2)',
-            }}
+            key={index}
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-50px' }}
+            transition={{ duration: 0.6 }}
+            className="relative"
           >
-            <Heart className="w-4 h-4" style={{ color: '#E8D5D3' }} fill="currentColor" />
-          </motion.div>
-
-          {/* Content Card */}
-          <div className={`ml-16 md:ml-0 md:w-1/2 ${
-            index % 2 === 0 ? 'md:pr-16 md:text-right' : 'md:pl-16 md:text-left'
-          }`}>
-            <motion.div
-              whileHover={{
-                y: -4,
-                boxShadow: '0 12px 24px rgba(0, 0, 0, 0.08)',
+            {/* Heart marker on center line */}
+            <div
+              className="hidden md:flex absolute left-1/2 top-0 -translate-x-1/2 w-10 h-10 rounded-full items-center justify-center z-10"
+              style={{
+                background: '#FFFEF9',
+                border: '2px solid #C9B896',
+                boxShadow: '0 4px 12px rgba(201, 184, 150, 0.3)',
               }}
-              className="rounded-xl overflow-hidden card-elegant"
             >
-              {/* Image */}
-              {event.image && (
-                <div className="relative h-48 md:h-56">
-                  <Image
-                    src={event.image}
-                    alt={event.title}
-                    fill
-                    className="object-cover"
-                  />
-                  {/* Soft overlay */}
-                  <div
-                    className="absolute inset-0"
-                    style={{
-                      background: 'linear-gradient(180deg, transparent 60%, rgba(250, 248, 245, 0.3) 100%)',
-                    }}
-                  />
-                </div>
-              )}
-              <div className="p-6">
-                {/* Date Badge */}
-                <span
-                  className="inline-block px-4 py-1.5 text-sm font-medium rounded-full mb-3"
-                  style={{
-                    background: 'rgba(123, 163, 181, 0.15)',
-                    color: '#5A8899',
-                  }}
-                >
-                  {event.date}
-                </span>
-                {/* Title */}
-                <h3
-                  className="text-xl font-serif mb-2"
-                  style={{ color: '#3D3D3D' }}
-                >
-                  {event.title}
-                </h3>
-                {/* Description */}
-                <p className="leading-relaxed" style={{ color: '#6B6B6B' }}>
-                  {event.description}
-                </p>
+              <Heart className="w-4 h-4" style={{ color: '#E8D5D3' }} fill="currentColor" />
+            </div>
+
+            {/* Content grid */}
+            <div className="flex flex-col md:grid md:grid-cols-2 gap-8 md:gap-0 items-start">
+              {/* Left side - always has right padding to stay away from center */}
+              <div className="md:pr-20">
+                {index % 2 === 0 ? (
+                  // Even: Image on left
+                  event.image && (
+                    <motion.div
+                      whileHover={{ scale: 1.02 }}
+                      transition={{ duration: 0.3 }}
+                      className="relative w-full aspect-square rounded-2xl overflow-hidden shadow-lg max-w-sm ml-auto"
+                    >
+                      <Image
+                        src={event.image}
+                        alt={event.title}
+                        fill
+                        className="object-cover"
+                        style={{ objectPosition: event.imagePosition || 'center' }}
+                      />
+                    </motion.div>
+                  )
+                ) : (
+                  // Odd: Text on left
+                  <div className="text-center md:text-right ml-auto max-w-sm">
+                    <span
+                      className="inline-block px-5 py-2 text-sm font-medium rounded-full mb-4"
+                      style={{
+                        background: 'rgba(123, 163, 181, 0.15)',
+                        color: '#5A8899',
+                      }}
+                    >
+                      {event.date}
+                    </span>
+                    <h3
+                      className="text-2xl md:text-3xl font-serif mb-3"
+                      style={{ color: '#3D3D3D' }}
+                    >
+                      {event.title}
+                    </h3>
+                    <p className="text-lg leading-relaxed" style={{ color: '#6B6B6B' }}>
+                      {event.description}
+                    </p>
+                  </div>
+                )}
               </div>
-            </motion.div>
-          </div>
 
-          {/* Empty space for alternating layout */}
-          <div className="hidden md:block md:w-1/2" />
-        </motion.div>
-      ))}
-
-      {/* End ornament */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0 }}
-        whileInView={{ opacity: 1, scale: 1 }}
-        viewport={{ once: true }}
-        className="absolute left-4 md:left-1/2 bottom-0 -translate-x-1/2 w-4 h-4 rotate-45"
-        style={{
-          background: '#7BA3B5',
-        }}
-      />
+              {/* Right side - always has left padding to stay away from center */}
+              <div className="md:pl-20">
+                {index % 2 === 0 ? (
+                  // Even: Text on right
+                  <div className="text-center md:text-left mr-auto max-w-sm">
+                    <span
+                      className="inline-block px-5 py-2 text-sm font-medium rounded-full mb-4"
+                      style={{
+                        background: 'rgba(123, 163, 181, 0.15)',
+                        color: '#5A8899',
+                      }}
+                    >
+                      {event.date}
+                    </span>
+                    <h3
+                      className="text-2xl md:text-3xl font-serif mb-3"
+                      style={{ color: '#3D3D3D' }}
+                    >
+                      {event.title}
+                    </h3>
+                    <p className="text-lg leading-relaxed" style={{ color: '#6B6B6B' }}>
+                      {event.description}
+                    </p>
+                  </div>
+                ) : (
+                  // Odd: Image on right
+                  event.image && (
+                    <motion.div
+                      whileHover={{ scale: 1.02 }}
+                      transition={{ duration: 0.3 }}
+                      className="relative w-full aspect-square rounded-2xl overflow-hidden shadow-lg max-w-sm mr-auto"
+                    >
+                      <Image
+                        src={event.image}
+                        alt={event.title}
+                        fill
+                        className="object-cover"
+                        style={{ objectPosition: event.imagePosition || 'center' }}
+                      />
+                    </motion.div>
+                  )
+                )}
+              </div>
+            </div>
+          </motion.div>
+        ))}
+      </div>
     </div>
   );
 }

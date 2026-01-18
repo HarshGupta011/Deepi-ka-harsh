@@ -41,27 +41,28 @@ export default function PhotoGallery({ photos }: PhotoGalleryProps) {
 
   return (
     <>
-      {/* Photo Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+      {/* Photo Grid - Masonry Style */}
+      <div className="columns-2 md:columns-3 lg:columns-4 gap-4 md:gap-6 space-y-4 md:space-y-6">
         {photos.map((photo, index) => (
           <motion.div
             key={index}
             initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
-            transition={{ delay: index * 0.05 }}
+            transition={{ delay: index * 0.03 }}
             whileHover={{
               scale: 1.02,
               boxShadow: '0 12px 24px rgba(0, 0, 0, 0.1)',
             }}
-            className="relative aspect-square cursor-pointer group overflow-hidden rounded-xl card-elegant"
+            className="relative cursor-pointer group overflow-hidden rounded-xl card-elegant break-inside-avoid mb-4 md:mb-6"
             onClick={() => openLightbox(index)}
           >
             <Image
               src={photo.src}
               alt={photo.alt}
-              fill
-              className="object-cover transition-transform duration-500 group-hover:scale-105"
+              width={600}
+              height={800}
+              className="w-full h-auto object-cover object-center transition-transform duration-500 group-hover:scale-105"
               sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
             />
 
