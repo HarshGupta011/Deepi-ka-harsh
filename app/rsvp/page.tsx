@@ -112,7 +112,7 @@ export default function RSVPPage() {
               RSVP
             </h1>
             <p className="text-lg md:text-xl leading-relaxed" style={{ color: '#6B6B6B' }}>
-              If it were up to us, attendance would be mandatory—we can&apos;t imagine celebrating without you. But since we&apos;re polite, please let us know if you can make it.
+              If it were up to us, attendance would be mandatory — we can&apos;t imagine celebrating without you. But since we&apos;re polite, please let us know if you can make it.
             </p>
 
             <ElegantDivider variant="line" className="mt-8" />
