@@ -9,7 +9,7 @@ import ElegantDivider from '@/components/ElegantDivider';
 const faqItems = [
   {
     question: 'When is the RSVP deadline?',
-    answer: 'Please RSVP by May 15, 2025, so we can finalize our guest count and seating arrangements. You can RSVP through our website or by contacting us directly.',
+    answer: 'Please RSVP by August 1st, 2026, so we can finalize our guest count and seating arrangements. You can RSVP through our website or by contacting us directly.',
   },
   {
     question: 'What is the dress code?',

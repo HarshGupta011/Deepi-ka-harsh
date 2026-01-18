@@ -2,15 +2,80 @@
 
 import { motion } from 'framer-motion';
 import RSVPForm from '@/components/RSVPForm';
-import { Calendar, MapPin, Clock, Heart, Mail } from 'lucide-react';
+import { Heart, Mail } from 'lucide-react';
 import ElegantDivider from '@/components/ElegantDivider';
+
+// Subtle floating rings animation
+function FloatingRings() {
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {/* Large ring */}
+      <motion.div
+        className="absolute -right-20 top-1/4 w-64 h-64 rounded-full opacity-20"
+        style={{ border: '2px solid #C9B896' }}
+        animate={{
+          y: [0, -20, 0],
+          rotate: [0, 5, 0],
+        }}
+        transition={{
+          duration: 8,
+          repeat: Infinity,
+          ease: 'easeInOut',
+        }}
+      />
+      {/* Medium ring */}
+      <motion.div
+        className="absolute -left-10 top-1/3 w-40 h-40 rounded-full opacity-15"
+        style={{ border: '2px solid #7BA3B5' }}
+        animate={{
+          y: [0, 15, 0],
+          rotate: [0, -5, 0],
+        }}
+        transition={{
+          duration: 6,
+          repeat: Infinity,
+          ease: 'easeInOut',
+          delay: 1,
+        }}
+      />
+      {/* Small decorative dots */}
+      <motion.div
+        className="absolute right-1/4 top-1/2 w-3 h-3 rounded-full"
+        style={{ background: '#E8D5D3' }}
+        animate={{
+          scale: [1, 1.3, 1],
+          opacity: [0.4, 0.7, 0.4],
+        }}
+        transition={{
+          duration: 3,
+          repeat: Infinity,
+          ease: 'easeInOut',
+        }}
+      />
+      <motion.div
+        className="absolute left-1/3 bottom-1/4 w-2 h-2 rounded-full"
+        style={{ background: '#C9B896' }}
+        animate={{
+          scale: [1, 1.5, 1],
+          opacity: [0.3, 0.6, 0.3],
+        }}
+        transition={{
+          duration: 4,
+          repeat: Infinity,
+          ease: 'easeInOut',
+          delay: 0.5,
+        }}
+      />
+    </div>
+  );
+}
 
 export default function RSVPPage() {
   return (
     <>
       {/* Hero Section - Blush Pastel */}
       <section
-        className="relative py-24 md:py-32 overflow-hidden"
+        className="relative py-12 md:py-16 overflow-hidden"
         style={{
           background: '#F8F0EE',
         }}
@@ -47,64 +112,11 @@ export default function RSVPPage() {
               RSVP
             </h1>
             <p className="text-lg md:text-xl leading-relaxed" style={{ color: '#6B6B6B' }}>
-              We can&apos;t wait to celebrate with you! Please let us know if you&apos;ll be able to join us.
+              If it were up to us, attendance would be mandatory — we can&apos;t imagine celebrating without you. But since we&apos;re polite, please let us know if you can make it.
             </p>
 
             <ElegantDivider variant="line" className="mt-8" />
           </motion.div>
-        </div>
-      </section>
-
-      {/* Event Quick Info - Warm Cream */}
-      <section
-        className="py-8 relative overflow-hidden"
-        style={{
-          background: '#F5EDE5',
-          borderBottom: '1px solid rgba(201, 184, 150, 0.3)',
-        }}
-      >
-        <div className="container-wedding">
-          <div className="flex flex-wrap items-center justify-center gap-6 md:gap-12">
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="flex items-center gap-3 px-5 py-2.5 rounded-full"
-              style={{
-                background: 'rgba(255, 254, 249, 0.9)',
-                border: '1px solid rgba(201, 184, 150, 0.4)',
-              }}
-            >
-              <Calendar className="w-5 h-5" style={{ color: '#7BA3B5' }} />
-              <span style={{ color: '#3D3D3D' }}>June 15, 2025</span>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="flex items-center gap-3 px-5 py-2.5 rounded-full"
-              style={{
-                background: 'rgba(255, 254, 249, 0.9)',
-                border: '1px solid rgba(201, 184, 150, 0.4)',
-              }}
-            >
-              <Clock className="w-5 h-5" style={{ color: '#7BA3B5' }} />
-              <span style={{ color: '#3D3D3D' }}>4:00 PM</span>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              className="flex items-center gap-3 px-5 py-2.5 rounded-full"
-              style={{
-                background: 'rgba(255, 254, 249, 0.9)',
-                border: '1px solid rgba(201, 184, 150, 0.4)',
-              }}
-            >
-              <MapPin className="w-5 h-5" style={{ color: '#7BA3B5' }} />
-              <span style={{ color: '#3D3D3D' }}>The Garden Estate, Napa Valley</span>
-            </motion.div>
-          </div>
         </div>
       </section>
 
@@ -115,6 +127,7 @@ export default function RSVPPage() {
           background: '#E8F0E2',
         }}
       >
+        <FloatingRings />
         <div className="container-wedding relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -130,7 +143,7 @@ export default function RSVPPage() {
                   Kindly Respond
                 </h2>
                 <p style={{ color: '#6B6B6B' }}>
-                  Please RSVP by May 15, 2025
+                  Please RSVP by Aug 1, 2025
                 </p>
                 <ElegantDivider variant="simple" className="mt-4 max-w-xs mx-auto" />
               </div>
@@ -171,18 +184,12 @@ export default function RSVPPage() {
             <h2 className="font-serif text-2xl md:text-3xl mb-4" style={{ color: '#3D3D3D' }}>
               Questions?
             </h2>
-            <p className="mb-6" style={{ color: '#6B6B6B' }}>
-              If you have any questions or need to update your RSVP, please don&apos;t hesitate to reach out.
+            <p className="mb-2" style={{ color: '#6B6B6B' }}>
+              Need to reach us? You know who we are.
             </p>
-
-            {/* Email link */}
-            <motion.a
-              href="mailto:wedding@deepiandharsh.com"
-              whileHover={{ scale: 1.02 }}
-              className="inline-block px-8 py-3 rounded-lg transition-all btn-dusty-blue"
-            >
-              wedding@deepiandharsh.com
-            </motion.a>
+            <p className="italic" style={{ color: '#7BA3B5' }}>
+              You have our numbers. Use them wisely... or just show up!
+            </p>
 
             {/* Decorative element */}
             <motion.div
