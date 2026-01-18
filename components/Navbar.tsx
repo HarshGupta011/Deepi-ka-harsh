@@ -3,18 +3,16 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Heart } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 
 const navLinks = [
   { href: '/', label: 'Home' },
   { href: '/our-story', label: 'Our Story' },
   { href: '/events', label: 'Events' },
-  { href: '/gallery', label: 'Gallery' },
+  { href: '/travel', label: 'Travel & Stay' },
   { href: '/rsvp', label: 'RSVP' },
-  { href: '/registry', label: 'Registry' },
-  { href: '/guestbook', label: 'Guestbook' },
-  { href: '/travel', label: 'Travel' },
-  { href: '/faq', label: 'FAQ' },
+  { href: '/gallery', label: 'Gallery' },
+  { href: '/faq', label: 'FAQs' },
 ];
 
 export default function Navbar() {
@@ -43,52 +41,40 @@ export default function Navbar() {
       } : {}}
     >
       <div className="container-wedding">
-        <div className="flex items-center justify-between h-16 md:h-20">
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 group">
-            <motion.div
-              whileHover={{ scale: 1.1, rotate: 5 }}
-              transition={{ type: 'spring', stiffness: 400 }}
-            >
-              <Heart
-                className="w-5 h-5 transition-all duration-300"
-                style={{ color: '#7BA3B5' }}
-                fill="currentColor"
-              />
-            </motion.div>
+        {/* Centered Layout */}
+        <div className="flex flex-col items-center py-1.5 md:py-2">
+          {/* Logo - Centered */}
+          <Link href="/" className="mb-0.5 md:mb-1">
             <span
-              className="font-script text-2xl md:text-3xl transition-all duration-300"
+              className="font-signature text-lg md:text-xl transition-all duration-300 hover:opacity-70"
               style={{ color: '#3D3D3D' }}
             >
-              H & D
+              D & H
             </span>
           </Link>
 
-          {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center space-x-1">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="px-3 py-2 text-sm font-medium transition-all duration-300 relative group"
-                style={{ color: '#3D3D3D' }}
-              >
-                <span className="relative z-10 group-hover:text-dusty-500 transition-colors">
+          {/* Desktop Navigation - Centered with dividers */}
+          <div className="hidden md:flex items-center">
+            {navLinks.map((link, index) => (
+              <div key={link.href} className="flex items-center">
+                <Link
+                  href={link.href}
+                  className="px-2.5 py-0 text-[11px] tracking-wide transition-all duration-300 hover:opacity-60"
+                  style={{ color: '#5A5A5A' }}
+                >
                   {link.label}
-                </span>
-                {/* Dusty blue underline on hover */}
-                <span
-                  className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 transition-all duration-300 group-hover:w-full rounded-full"
-                  style={{ background: '#7BA3B5' }}
-                />
-              </Link>
+                </Link>
+                {index < navLinks.length - 1 && (
+                  <span className="text-gray-300 mx-0.5 text-[11px]">|</span>
+                )}
+              </div>
             ))}
           </div>
 
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="lg:hidden p-2 hover:opacity-70 transition-all duration-300 rounded-lg"
+            className="md:hidden absolute right-4 top-2 p-1.5 hover:opacity-70 transition-all duration-300 rounded-lg"
             style={{
               color: '#3D3D3D',
               background: isOpen ? 'rgba(123, 163, 181, 0.1)' : 'transparent',
@@ -108,7 +94,7 @@ export default function Navbar() {
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3 }}
-            className="lg:hidden backdrop-blur-md overflow-hidden"
+            className="md:hidden backdrop-blur-md overflow-hidden"
             style={{
               background: 'rgba(250, 248, 245, 0.98)',
               borderTop: '1px solid rgba(201, 184, 150, 0.3)',
@@ -125,34 +111,15 @@ export default function Navbar() {
                   <Link
                     href={link.href}
                     onClick={() => setIsOpen(false)}
-                    className="block px-4 py-3 rounded-lg transition-all duration-300 hover:pl-6 hover:bg-blush-100"
+                    className="block px-4 py-3 text-center transition-all duration-300 hover:opacity-60"
                     style={{
-                      color: '#3D3D3D',
+                      color: '#5A5A5A',
                     }}
                   >
-                    <span className="flex items-center gap-3">
-                      <span
-                        className="w-1.5 h-1.5 rounded-full"
-                        style={{ background: '#7BA3B5' }}
-                      />
-                      {link.label}
-                    </span>
+                    {link.label}
                   </Link>
                 </motion.div>
               ))}
-
-              {/* Decorative divider */}
-              <motion.div
-                initial={{ opacity: 0, scaleX: 0 }}
-                animate={{ opacity: 1, scaleX: 1 }}
-                transition={{ delay: 0.4 }}
-                className="pt-4 mt-4"
-                style={{ borderTop: '1px solid rgba(201, 184, 150, 0.3)' }}
-              >
-                <p className="text-center text-sm font-script" style={{ color: '#7BA3B5' }}>
-                  June 15, 2025
-                </p>
-              </motion.div>
             </div>
           </motion.div>
         )}
