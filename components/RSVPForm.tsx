@@ -148,35 +148,47 @@ export default function RSVPForm() {
     e.preventDefault();
     setStatus('loading');
 
+    // Google Apps Script URL - replace with your deployed script URL
+    const GOOGLE_SCRIPT_URL = process.env.NEXT_PUBLIC_GOOGLE_SCRIPT_URL || 'YOUR_GOOGLE_SCRIPT_URL';
+
     try {
-      const response = await fetch('https://formspree.io/f/your-form-id', {
+      const response = await fetch(GOOGLE_SCRIPT_URL, {
         method: 'POST',
+        mode: 'no-cors', // Required for Google Apps Script
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          timestamp: new Date().toISOString(),
+          email: formData.email,
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          attending: formData.attending,
+          guestCount: formData.guestCount,
+          guestNames: formData.guests.map(g => `${g.firstName} ${g.lastName}`).join(', '),
+          events: formData.selectedEvents.join(', '),
+          message: formData.message,
+        }),
       });
 
-      if (response.ok) {
-        setStatus('success');
-        // Show confetti only if attending
-        if (formData.attending === 'Joyfully Accepts') {
-          setShowConfetti(true);
-          setTimeout(() => setShowConfetti(false), 3000);
-        }
-        setFormData({
-          firstName: '',
-          lastName: '',
-          email: '',
-          attending: '',
-          guestCount: '1',
-          guests: [],
-          selectedEvents: [],
-          message: '',
-        });
-      } else {
-        setStatus('error');
+      // With no-cors mode, we can't read the response, so we assume success
+      // The Google Script handles duplicates on its end
+      setStatus('success');
+      // Show confetti only if attending
+      if (formData.attending === 'Joyfully Accepts') {
+        setShowConfetti(true);
+        setTimeout(() => setShowConfetti(false), 3000);
       }
+      setFormData({
+        firstName: '',
+        lastName: '',
+        email: '',
+        attending: '',
+        guestCount: '1',
+        guests: [],
+        selectedEvents: [],
+        message: '',
+      });
     } catch {
       setStatus('error');
     }
@@ -310,7 +322,7 @@ export default function RSVPForm() {
           {['Joyfully Accepts', 'Regretfully Declines'].map((option) => (
             <label
               key={option}
-              className={`flex items-center gap-3 px-5 py-3 rounded-lg cursor-pointer transition-all`}
+              className={`flex items-center gap-3 px-4 py-4 sm:px-5 sm:py-3 rounded-lg cursor-pointer transition-all min-h-[48px]`}
               style={{
                 background: formData.attending === option
                   ? 'rgba(123, 163, 181, 0.15)'
@@ -452,15 +464,15 @@ export default function RSVPForm() {
                       }
                       setExpandedSections(newExpanded);
                     }}
-                    className="p-1 rounded hover:bg-gray-100 transition-colors"
+                    className="p-2.5 -ml-2.5 rounded hover:bg-gray-100 transition-colors"
                   >
                     {expandedSections.has('all') ? (
-                      <ChevronDown className="w-4 h-4" style={{ color: '#7BA3B5' }} />
+                      <ChevronDown className="w-5 h-5" style={{ color: '#7BA3B5' }} />
                     ) : (
-                      <ChevronRight className="w-4 h-4" style={{ color: '#7BA3B5' }} />
+                      <ChevronRight className="w-5 h-5" style={{ color: '#7BA3B5' }} />
                     )}
                   </button>
-                  <label className="flex items-center gap-2 cursor-pointer">
+                  <label className="flex items-center gap-3 cursor-pointer min-h-[44px]">
                     <input
                       type="checkbox"
                       checked={formData.selectedEvents.length === ALL_EVENT_IDS.length}
@@ -478,7 +490,7 @@ export default function RSVPForm() {
                           setFormData((prev) => ({ ...prev, selectedEvents: [] }));
                         }
                       }}
-                      className="w-4 h-4 rounded"
+                      className="w-5 h-5 rounded"
                       style={{ accentColor: '#7BA3B5' }}
                     />
                     <span className="font-medium" style={{ color: '#3D3D3D' }}>All Events</span>
@@ -492,7 +504,7 @@ export default function RSVPForm() {
                       initial={{ opacity: 0, height: 0 }}
                       animate={{ opacity: 1, height: 'auto' }}
                       exit={{ opacity: 0, height: 0 }}
-                      className="ml-6 space-y-2 overflow-hidden"
+                      className="ml-4 sm:ml-6 space-y-2 overflow-hidden"
                     >
                       {Object.entries(EVENTS).map(([cityKey, city]) => {
                         const cityEventIds = city.events.map((e) => e.id);
@@ -516,15 +528,15 @@ export default function RSVPForm() {
                                   }
                                   setExpandedSections(newExpanded);
                                 }}
-                                className="p-1 rounded hover:bg-gray-100 transition-colors"
+                                className="p-2.5 -ml-2.5 rounded hover:bg-gray-100 transition-colors"
                               >
                                 {expandedSections.has(cityKey) ? (
-                                  <ChevronDown className="w-4 h-4" style={{ color: '#7BA3B5' }} />
+                                  <ChevronDown className="w-5 h-5" style={{ color: '#7BA3B5' }} />
                                 ) : (
-                                  <ChevronRight className="w-4 h-4" style={{ color: '#7BA3B5' }} />
+                                  <ChevronRight className="w-5 h-5" style={{ color: '#7BA3B5' }} />
                                 )}
                               </button>
-                              <label className="flex items-center gap-2 cursor-pointer">
+                              <label className="flex items-center gap-3 cursor-pointer min-h-[44px]">
                                 <input
                                   type="checkbox"
                                   checked={allCitySelected}
@@ -550,7 +562,7 @@ export default function RSVPForm() {
                                       }));
                                     }
                                   }}
-                                  className="w-4 h-4 rounded"
+                                  className="w-5 h-5 rounded"
                                   style={{ accentColor: '#7BA3B5' }}
                                 />
                                 <span style={{ color: '#3D3D3D' }}>{city.label}</span>
@@ -564,12 +576,12 @@ export default function RSVPForm() {
                                   initial={{ opacity: 0, height: 0 }}
                                   animate={{ opacity: 1, height: 'auto' }}
                                   exit={{ opacity: 0, height: 0 }}
-                                  className="ml-10 space-y-1 overflow-hidden"
+                                  className="ml-6 sm:ml-10 space-y-1 overflow-hidden"
                                 >
                                   {city.events.map((event) => (
                                     <label
                                       key={event.id}
-                                      className="flex items-center gap-2 cursor-pointer py-1"
+                                      className="flex items-center gap-3 cursor-pointer py-2 min-h-[44px]"
                                     >
                                       <input
                                         type="checkbox"
@@ -589,7 +601,7 @@ export default function RSVPForm() {
                                             }));
                                           }
                                         }}
-                                        className="w-4 h-4 rounded"
+                                        className="w-5 h-5 rounded"
                                         style={{ accentColor: '#7BA3B5' }}
                                       />
                                       <span style={{ color: '#6B6B6B' }}>{event.label}</span>

@@ -75,7 +75,7 @@ export default function RSVPPage() {
     <>
       {/* Hero Section - Blush Pastel */}
       <section
-        className="relative py-12 md:py-16 overflow-hidden"
+        className="relative py-12 md:py-16 overflow-hidden -mt-16 md:-mt-20 pt-28 md:pt-36"
         style={{
           background: '#F8F0EE',
         }}
@@ -87,7 +87,7 @@ export default function RSVPPage() {
             className="text-center max-w-3xl mx-auto"
           >
             <h1
-              className="font-script text-5xl md:text-7xl lg:text-8xl mb-6"
+              className="font-script text-3xl sm:text-5xl md:text-7xl lg:text-8xl mb-6"
               style={{ color: '#3D3D3D' }}
             >
               RSVP
@@ -117,7 +117,7 @@ export default function RSVPPage() {
             className="max-w-2xl mx-auto"
           >
             {/* Form Card */}
-            <div className="rounded-2xl p-6 md:p-10 card-elegant">
+            <div className="rounded-2xl p-4 sm:p-6 md:p-10 card-elegant">
               {/* Header */}
               <div className="text-center mb-8">
                 <h2 className="font-serif text-2xl md:text-3xl mb-2" style={{ color: '#3D3D3D' }}>

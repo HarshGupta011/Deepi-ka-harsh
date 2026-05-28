@@ -70,7 +70,7 @@ export default function OurStoryPage() {
     <>
       {/* Hero Section with User's Photo */}
       <section
-        className="relative py-12 md:py-16 overflow-hidden"
+        className="relative py-12 md:py-16 overflow-hidden -mt-16 md:-mt-20 pt-28 md:pt-36"
       >
         {/* Background Image with Overlay */}
         <div className="absolute inset-0">
@@ -97,7 +97,7 @@ export default function OurStoryPage() {
             className="text-center max-w-3xl mx-auto"
           >
             <h1
-              className="font-script text-5xl md:text-7xl lg:text-8xl mb-6"
+              className="font-script text-3xl sm:text-5xl md:text-7xl lg:text-8xl mb-6"
               style={{ color: '#2D2D2D' }}
             >
               Our Story
