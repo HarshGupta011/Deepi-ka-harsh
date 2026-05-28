@@ -104,7 +104,7 @@ export default function ThingsToDoPage() {
     <>
       {/* Hero */}
       <section
-        className="relative py-12 md:py-16 overflow-hidden"
+        className="relative py-12 md:py-16 overflow-hidden -mt-16 md:-mt-20 pt-28 md:pt-36"
         style={{ background: '#E5EFF3' }}
       >
         <div className="container-wedding relative z-10">
@@ -133,7 +133,7 @@ export default function ThingsToDoPage() {
             </motion.div>
 
             <h1
-              className="font-script text-5xl md:text-7xl lg:text-8xl mb-6"
+              className="font-script text-3xl sm:text-5xl md:text-7xl lg:text-8xl mb-6"
               style={{ color: '#3D3D3D' }}
             >
               Things to Do

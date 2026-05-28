@@ -171,7 +171,7 @@ export default function Home() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="font-names text-5xl md:text-6xl mb-2"
+              className="font-names text-3xl sm:text-5xl md:text-6xl mb-2"
               style={{ color: '#3D3D3D', textShadow: '0 2px 8px rgba(255,255,255,0.8)' }}
             >
               Two State Wedding

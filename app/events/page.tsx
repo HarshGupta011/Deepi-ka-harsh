@@ -442,7 +442,7 @@ export default function EventsPage() {
           className="text-center mb-16"
         >
           <h1
-            className="font-script text-5xl md:text-7xl mb-4"
+            className="font-script text-3xl sm:text-5xl md:text-7xl mb-4"
             style={{ color: '#3D3D3D' }}
           >
             Our Celebrations
