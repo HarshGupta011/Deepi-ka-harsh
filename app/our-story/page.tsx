@@ -9,48 +9,59 @@ import ElegantDivider from '@/components/ElegantDivider';
 const timelineEvents = [
   {
     date: '2016',
-    title: 'Our first ever picture',
-    description: 'Taken 10 years ago during undergrad, when Harsh was helping Deepika with coursework. We became friends around that time.',
+    title: 'The Beginning — Bangalore Days',
+    description:
+      "Deepika, a Bangalore girl. Harsh, straight out of Kolkata.\n\nThey met during undergrad in Bangalore, where it all started with friendship, group projects, random conversations, and spending way too much time together “just as friends.”\n\nSomewhere between classes, chai breaks, and campus life… they started liking each other a little more than expected.",
     image: '/images/first-meeting.png',
     imagePosition: 'center top',
   },
   {
     date: '2018',
-    title: 'First Date',
-    description: 'Our first official date was at a cozy Italian restaurant downtown. We talked for hours and closed the place down.',
+    title: 'From Friends to Something More',
+    description:
+      "What started as an easy friendship slowly turned into late-night calls, inside jokes, constant food plans, and becoming each other’s favorite person.\n\nCollege may have given them degrees, but it also gave them this.",
     image: '/images/gallery/d570c152-af13-4e3f-9394-690f0e7c7c9b_Original.jpg',
     imagePosition: 'center bottom',
   },
   {
-    date: 'June 2019',
-    title: 'Made It Official',
-    description: 'After six months of dating, Harsh asked Deepika to be his girlfriend during a sunset picnic at the beach.',
-    image: 'https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?q=80&w=1000',
+    date: '2020',
+    title: 'The Big Move — USA Era Begins',
+    description:
+      "Deepika moved to the US to pursue her higher studies in Arizona.\n\nAnd Harsh? Well… let’s just say he coincidentally also decided America sounded like a great idea.\n\nHe moved to Colorado for his studies, and suddenly their story became one of airports, countdowns, FaceTimes, and figuring life out together from different states.",
+    image: '/images/graduation.jpg',
+    imagePosition: 'center',
   },
   {
-    date: 'February 2020',
-    title: 'Moving In Together',
-    description: 'We took the big step and moved into our first apartment together. Our tiny kitchen has seen many cooking adventures!',
-    image: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?q=80&w=1000',
+    date: '2021 – 2023',
+    title: 'Growing Together, Miles Apart',
+    description:
+      "Arizona and Colorado eventually turned into Austin and California. Different cities. Different jobs. Different time zones sometimes — but somehow, never different priorities.\n\nThrough career changes, stressful days, cross-country flights, and endless “when are you visiting next?” conversations, they kept showing up for each other.\n\nLong distance didn’t make them drift apart. It made them stronger.",
+    image: '/images/cowboy.jpg',
+    imagePosition: 'center',
   },
   {
-    date: 'July 2022',
-    title: 'European Adventure',
-    description: 'We spent three weeks exploring Italy, France, and Spain. That trip made us realize we\'re perfect travel partners.',
-    image: 'https://images.unsplash.com/photo-1499856871958-5b9627545d1a?q=80&w=1000',
-  },
-  {
-    date: 'October 2024',
+    date: 'September 2024',
     title: 'The Proposal',
-    description: 'Harsh proposed at our favorite hiking spot overlooking the valley. Deepika said yes before he could finish asking!',
+    description:
+      "After years of growing together through every phase of life, Harsh finally asked the question Deepika already knew the answer to.\n\nA beautiful proposal, a very emotional “yes,” and the easiest decision they’ve ever made.",
     image: '/images/proposal.jpg',
     imagePosition: 'center 40%',
   },
   {
-    date: 'June 2025',
-    title: 'The Wedding',
-    description: 'And now, we\'re about to embark on our greatest adventure yet - becoming husband and wife!',
-    image: 'https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=1000',
+    date: '2025 – 2026',
+    title: 'California, Finally',
+    description:
+      "After years of different cities and long-distance flights, life finally brought them both to California.\n\nNo more airport goodbyes. No more countdown apps. Just the two of them, building a life together in the same city at last.",
+    image: '/images/waterfall-hug.jpg',
+    imagePosition: 'center',
+  },
+  {
+    date: 'December 2026',
+    title: 'The Wedding Knot',
+    description:
+      "From Bangalore to Kolkata. From Arizona to Colorado. From Austin to California.\n\nA story built across cities, time zones, careers, and years of growing together — now leading to forever.\n\nAnd now… they’re finally ready to tie the knot.\n\nDeepi-ka-Harsh ♡",
+    image: '/images/helicopter-ring.jpg',
+    imagePosition: 'center',
   },
 ];
 

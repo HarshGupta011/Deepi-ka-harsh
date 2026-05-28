@@ -68,7 +68,13 @@ export default function AddToCalendar({ event }: AddToCalendarProps) {
     <div className="relative inline-block">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-4 py-2 bg-sage-600 hover:bg-sage-700 text-white rounded-lg transition-colors"
+        className="flex items-center gap-2 px-4 py-2.5 rounded-lg transition-all text-sm font-medium"
+        style={{
+          background: '#9CAF88',
+          color: 'white',
+        }}
+        onMouseEnter={(e) => (e.currentTarget.style.background = '#7A9268')}
+        onMouseLeave={(e) => (e.currentTarget.style.background = '#9CAF88')}
       >
         <Calendar className="w-4 h-4" />
         Add to Calendar
@@ -78,35 +84,48 @@ export default function AddToCalendar({ event }: AddToCalendarProps) {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
+            initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 10 }}
-            className="absolute top-full left-0 mt-2 w-48 bg-white rounded-lg shadow-xl border border-sage-100 overflow-hidden z-20"
+            exit={{ opacity: 0, y: -10 }}
+            className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 bg-white rounded-lg shadow-xl overflow-hidden z-50"
+            style={{ border: '1px solid #E8F0E2' }}
           >
             <a
               href={googleUrl()}
               target="_blank"
               rel="noopener noreferrer"
-              className="block px-4 py-3 text-sage-700 hover:bg-sage-50 transition-colors"
+              className="flex items-center gap-3 px-4 py-3 transition-colors text-sm"
+              style={{ color: '#3D3D3D' }}
+              onMouseEnter={(e) => (e.currentTarget.style.background = '#E8F0E2')}
+              onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
               onClick={() => setIsOpen(false)}
             >
+              <span className="text-lg">📅</span>
               Google Calendar
             </a>
             <a
               href={outlookUrl()}
               target="_blank"
               rel="noopener noreferrer"
-              className="block px-4 py-3 text-sage-700 hover:bg-sage-50 transition-colors"
+              className="flex items-center gap-3 px-4 py-3 transition-colors text-sm"
+              style={{ color: '#3D3D3D', borderTop: '1px solid #E8F0E2' }}
+              onMouseEnter={(e) => (e.currentTarget.style.background = '#E8F0E2')}
+              onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
               onClick={() => setIsOpen(false)}
             >
+              <span className="text-lg">📧</span>
               Outlook Calendar
             </a>
             <a
               href={icsContent()}
               download={`${event.title.replace(/\s+/g, '-')}.ics`}
-              className="block px-4 py-3 text-sage-700 hover:bg-sage-50 transition-colors"
+              className="flex items-center gap-3 px-4 py-3 transition-colors text-sm"
+              style={{ color: '#3D3D3D', borderTop: '1px solid #E8F0E2' }}
+              onMouseEnter={(e) => (e.currentTarget.style.background = '#E8F0E2')}
+              onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
               onClick={() => setIsOpen(false)}
             >
+              <span className="text-lg">🍎</span>
               Apple Calendar
             </a>
           </motion.div>

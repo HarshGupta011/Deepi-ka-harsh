@@ -86,25 +86,6 @@ export default function RSVPPage() {
             animate={{ opacity: 1, y: 0 }}
             className="text-center max-w-3xl mx-auto"
           >
-            {/* Decorative heart */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.2 }}
-              className="mb-6"
-            >
-              <motion.div
-                animate={{ scale: [1, 1.1, 1] }}
-                transition={{ duration: 2, repeat: Infinity }}
-              >
-                <Heart
-                  className="w-10 h-10 mx-auto"
-                  style={{ color: '#E8D5D3' }}
-                  fill="currentColor"
-                />
-              </motion.div>
-            </motion.div>
-
             <h1
               className="font-script text-5xl md:text-7xl lg:text-8xl mb-6"
               style={{ color: '#3D3D3D' }}

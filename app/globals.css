@@ -579,3 +579,23 @@ html {
 .shadow-dusty-blue {
   box-shadow: 0 8px 30px rgba(123, 163, 181, 0.3);
 }
+
+/* ========================================
+   3D FLIP CARD STYLES
+   ======================================== */
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.transform-style-3d {
+  transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.rotate-y-180 {
+  transform: rotateY(180deg);
+}

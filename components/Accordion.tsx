@@ -66,7 +66,7 @@ export default function Accordion({ items }: AccordionProps) {
                 transition={{ duration: 0.3, ease: 'easeInOut' }}
               >
                 <div
-                  className="px-6 pb-5 leading-relaxed"
+                  className="px-6 pb-5 leading-relaxed whitespace-pre-line"
                   style={{
                     color: '#6B6B6B',
                     borderTop: '1px solid rgba(201, 184, 150, 0.2)',

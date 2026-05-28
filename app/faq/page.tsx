@@ -9,59 +9,48 @@ import ElegantDivider from '@/components/ElegantDivider';
 const faqItems = [
   {
     question: 'When is the RSVP deadline?',
-    answer: 'Please RSVP by August 1st, 2026, so we can finalize our guest count and seating arrangements. You can RSVP through our website or by contacting us directly.',
+    answer:
+      'Please RSVP by August 15th, 2026, so we can finalize our guest count, seating, and stay allocations. You can RSVP through the RSVP page on our website.',
   },
   {
     question: 'What is the dress code?',
-    answer: 'We request formal Indian attire or black tie for our celebration. Ladies: sarees, lehengas, anarkalis, or elegant gowns in rich colors like red, maroon, gold, and jewel tones. Gentlemen: sherwanis, kurta pajamas, or dark suits/tuxedos. Please avoid wearing white or red, as those colors are traditionally reserved for the bride.',
+    answer:
+      'Each event has its own dress code — full details, colour palettes, and outfit inspiration are on the Events page. Don’t hesitate to reach out to us if you have questions or want suggestions.',
   },
   {
     question: 'Can I bring a plus one?',
-    answer: 'Due to venue capacity, we can only accommodate guests listed on the invitation. If you received a plus one, it will be noted on your invitation. Please reach out if you have questions.',
+    answer:
+      'Please check your invite — if you have the option for a plus one, it will be noted there. If anything is unclear, reach out to us directly.',
   },
   {
     question: 'Are children welcome?',
-    answer: 'While we love your little ones, we have decided to make our wedding an adults-only celebration. We hope this gives you a chance to enjoy a night off! We will have a list of recommended babysitters available upon request.',
+    answer:
+      'Yes — children are warmly welcome at every event except the Cocktail night, which is adults-only. We can’t wait to see your little ones at the rest of the celebrations!',
   },
   {
-    question: 'Will the ceremony be indoors or outdoors?',
-    answer: 'The ceremony will take place in the beautiful Rose Garden (outdoors), weather permitting. In case of rain, we have a gorgeous indoor backup location at the estate. We recommend ladies bring a wrap for the evening and avoid stiletto heels for the garden.',
-  },
-  {
-    question: 'What time should I arrive?',
-    answer: 'The ceremony begins promptly at 4:00 PM. We recommend arriving at least 30 minutes early to find parking, grab a drink, and get seated. Please plan accordingly!',
-  },
-  {
-    question: 'Is there parking at the venue?',
-    answer: 'Yes! The Garden Estate has complimentary parking for all guests. There will be attendants to direct you when you arrive.',
-  },
-  {
-    question: 'Will there be transportation provided?',
-    answer: 'We will be providing a shuttle service between The Vineyard Inn and the venue for guests who prefer not to drive. Shuttle times will be communicated closer to the wedding date.',
-  },
-  {
-    question: 'I have dietary restrictions. What should I do?',
-    answer: 'We want everyone to enjoy the meal! Please indicate any dietary restrictions or allergies on your RSVP form, and our caterer will prepare a suitable alternative for you. We offer vegetarian, vegan, and Jain options.',
+    question: 'What will the weather be like?',
+    answer:
+      'December is one of the best months to visit both cities.\n\nBangalore: pleasantly cool and dry — highs around 28°C / 82°F and lows around 15–17°C / 59–63°F. Mornings and evenings can feel chilly; a light jacket or shawl is handy.\n\nKolkata: mildly cool and dry — highs around 25–27°C / 77–80°F and lows around 11–16°C / 53–60°F. Comfortable during the day, breezy at night.\n\nRain is unlikely in both cities during the wedding week.',
   },
   {
     question: 'Can I take photos during the ceremony?',
-    answer: 'We kindly ask that you keep phones and cameras put away during the ceremony so our photographer can capture these special moments without distractions. We\'ll have plenty of time for photos during the reception! Feel free to use our hashtag #DeepiAndHarsh2025 to share reception photos.',
+    answer:
+      'Yes, of course! Feel free to take photos throughout. Tag us on Instagram and use our hashtags so we can repost — #DeepiKaHarsh and #DeepikaWedsHarsh.',
+  },
+  {
+    question: 'I have dietary restrictions. What should I do?',
+    answer:
+      'Please note: during the wedding events, only vegetarian food will be served — but expect plenty of variety at every event so there’s something for everyone.\n\nPlease note any specific restrictions or allergies on your RSVP and we’ll make sure suitable options are available for you.',
   },
   {
     question: 'Where can I find your gift registry?',
-    answer: 'Your presence is truly the greatest gift! However, if you wish to honor us with a gift, please visit our Registry page for links to our registries at Amazon, Zola, Crate & Barrel, and our honeymoon fund.',
+    answer:
+      'Your presence at our wedding is the greatest gift. If you’d still like to honour us with something, please visit our Registry page for the details.',
   },
   {
     question: 'What if I need to update my RSVP?',
-    answer: 'Things happen, and we understand! Please reach out to us as soon as possible at wedding@deepiandharsh.com to make any changes to your RSVP.',
-  },
-  {
-    question: 'Will there be an open bar?',
-    answer: 'Yes! We will have an open bar throughout the cocktail hour and reception with a selection of wine, beer, and signature cocktails. Please drink responsibly and use our shuttle service or a rideshare if needed.',
-  },
-  {
-    question: 'When does the reception end?',
-    answer: 'The reception will end at midnight. We plan to party until the very last song! After-party details may be shared closer to the wedding.',
+    answer:
+      'Life happens — just reach out to us as soon as you can and we’ll update it for you.',
   },
 ];
 

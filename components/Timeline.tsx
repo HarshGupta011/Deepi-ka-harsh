@@ -88,7 +88,10 @@ export default function Timeline({ events }: TimelineProps) {
                     >
                       {event.title}
                     </h3>
-                    <p className="text-lg leading-relaxed" style={{ color: '#6B6B6B' }}>
+                    <p
+                      className="text-lg leading-relaxed whitespace-pre-line"
+                      style={{ color: '#6B6B6B' }}
+                    >
                       {event.description}
                     </p>
                   </div>
@@ -115,7 +118,10 @@ export default function Timeline({ events }: TimelineProps) {
                     >
                       {event.title}
                     </h3>
-                    <p className="text-lg leading-relaxed" style={{ color: '#6B6B6B' }}>
+                    <p
+                      className="text-lg leading-relaxed whitespace-pre-line"
+                      style={{ color: '#6B6B6B' }}
+                    >
                       {event.description}
                     </p>
                   </div>
