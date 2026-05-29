@@ -8,11 +8,12 @@ A wedding website for Deepika & Harsh — Next.js 14 (App Router), TypeScript, T
 ## Run / build / deploy
 - `npm run dev` → http://localhost:3000
 - `npm run build` → production build. **It type-checks; `next dev` does NOT.** Always run `npm run build` locally before pushing — type errors that are invisible in dev will fail the Vercel build.
-- **Deploy:** Vercel, free Hobby. **Production branch is `harsh`** (NOT `main`). Push to `harsh` → auto-deploys to https://deepi-ka-harsh.vercel.app.
-- `main` is behind and currently does **not build** (the type fixes only exist on `harsh`). Don't point Vercel at `main` unless `harsh` is merged into it first.
+- **Deploy:** Vercel, free Hobby. **Production branch is `main`.** Push to `main` → auto-deploys to https://deepi-ka-harsh.vercel.app. (`harsh` was the old production branch; production now tracks `main`.)
 
 ## Backends
-- **RSVP → Google Sheets.** `components/RSVPForm.tsx` POSTs (`mode: 'no-cors'`) to a Google Apps Script web app whose `/exec` URL is the committed default (env `NEXT_PUBLIC_GOOGLE_SCRIPT_URL` overrides). `no-cors` ⇒ the form can't read the response, so it always shows success. Apps Script `doPost` appends a row; source is in the deploy plan file.
+- **RSVP → Google Sheets.** `components/RSVPForm.tsx` POSTs (`mode: 'no-cors'`) to a Google Apps Script web app whose `/exec` URL is the committed default (env `NEXT_PUBLIC_GOOGLE_SCRIPT_URL` overrides). `no-cors` ⇒ the form can't read the POST response, so submit always shows success; dedupe is enforced server-side instead (`doPost` upserts by normalized name + `LockService`). **Apps Script source is now committed at `apps-script/Code.gs`** (version control only — Apps Script doesn't pull from the repo). To change the backend: paste `Code.gs` into the bound Apps Script editor, then Deploy → Manage deployments → edit the existing web app → **New version** (keeps the `/exec` URL stable).
+  - **`doGet` lookup** (readable GET; falls back to JSONP): keyed on first+last name, returns `{ alreadyRSVPd, allowedEvents, found, ... }`. Powers two form behaviors: (1) **duplicate detection** — typing both names auto-checks for a prior RSVP and shows a "reach out to Harsh/Deepika" notice + disables submit; (2) **per-guest event allow-list** — the event tree is filtered to the guest's invited events. Both fail open (lookup error / unmatched name ⇒ all events shown, submit allowed). The +1 inherits the primary guest's allow-list.
+  - **Sheet tabs:** `Responses` (submissions; has a trailing `nameKey` helper column) and `InviteList` (`firstName, lastName, allowedEvents` — comma-separated event ids or `ALL`). Name matching is normalized (lowercase, trimmed, diacritics stripped); `normalizeName` in `Code.gs` and `normalizeNameClient` in `RSVPForm.tsx` must stay identical. Moderation = edit/delete rows in the Sheet.
 - **Recommendations → Supabase** (optional). `components/Recommendations.tsx` + `lib/supabase.ts` + `supabase/schema.sql`. Shows a "warming up" placeholder unless `NEXT_PUBLIC_SUPABASE_URL` + `NEXT_PUBLIC_SUPABASE_ANON_KEY` are set and the schema is run. RLS allows public read+insert; moderation = delete rows in the Supabase dashboard.
 - **Guestbook** (`app/guestbook/page.tsx`): exists but **unlinked in nav** and **not persisted** (local React state only). Treat as a demo until intentionally wired up.
 
@@ -29,7 +30,10 @@ A wedding website for Deepika & Harsh — Next.js 14 (App Router), TypeScript, T
 - Framer-motion v12 typing: `transition.ease` must be a literal (`'easeOut' as const`), not a widened `string`, or the build fails.
 - Avoid spreading Sets (`[...new Set(x)]`) — use `Array.from(new Set(x))` (tsconfig target is below es2015).
 
-## Planned / under discussion (RSVP changes — not yet implemented)
-1. Limit additional guests to a single **+1** (currently an arbitrary 1–5 count) — simplify `RSVPForm.tsx` guest UI.
-2. **Duplicate handling:** dedupe when the same person RSVPs twice (e.g. Apps Script upsert by email instead of always appending).
-3. **Per-guest event allow-lists:** maintain an invited-guest list (with allowed events) in the sheet; the form should only show each guest the events they're invited to. Needs a lookup (Apps Script `doGet`/read) keyed on name or email.
+## RSVP changes — implemented
+1. ~~Limit additional guests to a single **+1**.~~ Done (`guestCount` toggles 1↔2).
+2. ~~**Duplicate handling.**~~ Done — `doPost` upserts by normalized name; `doGet` lets the form detect a prior RSVP on name entry. See the RSVP backend bullet above.
+3. ~~**Per-guest event allow-lists.**~~ Done — `InviteList` tab + `doGet` lookup filter the event tree (fail-open). See above.
+
+## Still open / future
+- Name-only matching can't distinguish two real guests with the same name, and won't catch transliteration variants (Deepika/Dipika) — fail-open covers the latter. Email-augmented keying is the upgrade path if collisions show up.

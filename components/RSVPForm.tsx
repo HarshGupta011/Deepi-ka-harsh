@@ -1,8 +1,88 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, CheckCircle, AlertCircle, Heart, ChevronDown, ChevronRight } from 'lucide-react';
+
+// Deployed Google Apps Script endpoint (env var overrides if set).
+// Drives both the RSVP POST and the name lookup GET.
+const GOOGLE_SCRIPT_URL =
+  process.env.NEXT_PUBLIC_GOOGLE_SCRIPT_URL ||
+  'https://script.google.com/macros/s/AKfycbwjbQgc2IKQxT8aafz4x0qeA5uZS7NvfG8dILClUwgNp0nfzRiTXoZQI7UFskI6qbWPjQ/exec';
+
+interface LookupResult {
+  ok: boolean;
+  nameKey: string;
+  alreadyRSVPd?: boolean;
+  existingAttending?: string;
+  found?: boolean;
+  allowedEvents?: string[];
+}
+
+/**
+ * Canonical name key. MUST stay byte-for-byte identical to normalizeName in
+ * apps-script/Code.gs — the duplicate/allow-list lookup compares the two.
+ */
+function normalizeNameClient(first: string, last: string) {
+  return [first, last]
+    .join(' ')
+    .normalize('NFKD')
+    .replace(/[̀-ͯ]/g, '') // strip diacritics
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, ' ');
+}
+
+// JSONP fallback: Apps Script GET reads are flaky cross-origin in some browsers,
+// so if a plain fetch fails we load the response via a <script> + global callback.
+let jsonpCounter = 0;
+function lookupViaJsonp(url: string, timeoutMs: number): Promise<LookupResult> {
+  return new Promise((resolve, reject) => {
+    const cb = `__rsvpLookup${jsonpCounter++}`;
+    const script = document.createElement('script');
+    const cleanup = () => {
+      delete (window as unknown as Record<string, unknown>)[cb];
+      script.remove();
+      clearTimeout(timer);
+    };
+    const timer = setTimeout(() => {
+      cleanup();
+      reject(new Error('jsonp timeout'));
+    }, timeoutMs);
+    (window as unknown as Record<string, unknown>)[cb] = (data: LookupResult) => {
+      cleanup();
+      resolve(data);
+    };
+    script.onerror = () => {
+      cleanup();
+      reject(new Error('jsonp error'));
+    };
+    script.src = `${url}${url.includes('?') ? '&' : '?'}callback=${cb}`;
+    document.body.appendChild(script);
+  });
+}
+
+// Look up a name: try a readable fetch GET first, fall back to JSONP.
+async function lookupGuest(
+  first: string,
+  last: string,
+  signal: AbortSignal
+): Promise<LookupResult> {
+  const params = new URLSearchParams({
+    action: 'lookup',
+    firstName: first,
+    lastName: last,
+  });
+  const url = `${GOOGLE_SCRIPT_URL}?${params.toString()}`;
+  try {
+    const res = await fetch(url, { method: 'GET', signal });
+    if (!res.ok) throw new Error(`status ${res.status}`);
+    return (await res.json()) as LookupResult;
+  } catch (err) {
+    if (signal.aborted) throw err;
+    return lookupViaJsonp(url, 6000);
+  }
+}
 
 interface Guest {
   firstName: string;
@@ -107,6 +187,69 @@ export default function RSVPForm() {
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set());
   const [showConfetti, setShowConfetti] = useState(false);
 
+  const [lookupStatus, setLookupStatus] = useState<'idle' | 'loading' | 'done' | 'error'>('idle');
+  const [alreadyRSVPd, setAlreadyRSVPd] = useState(false);
+  const [allowedEvents, setAllowedEvents] = useState<string[]>(ALL_EVENT_IDS);
+
+  // Debounced lookup: once both names are present, ask the backend whether this
+  // person already RSVP'd and which events they're invited to.
+  useEffect(() => {
+    const f = formData.firstName.trim();
+    const l = formData.lastName.trim();
+    if (!f || !l) {
+      setLookupStatus('idle');
+      setAlreadyRSVPd(false);
+      setAllowedEvents(ALL_EVENT_IDS);
+      return;
+    }
+
+    const ctrl = new AbortController();
+    const timer = setTimeout(async () => {
+      setLookupStatus('loading');
+      try {
+        const data = await lookupGuest(f, l, ctrl.signal);
+        // Discard stale results from rapid typing — only honor the response whose
+        // key matches what's currently in the name fields.
+        if (data.nameKey !== normalizeNameClient(f, l)) return;
+        setAlreadyRSVPd(!!data.alreadyRSVPd);
+        // Fail-open: show all events unless the guest was matched to the invite list.
+        setAllowedEvents(data.found && data.allowedEvents?.length ? data.allowedEvents : ALL_EVENT_IDS);
+        setLookupStatus('done');
+      } catch {
+        if (!ctrl.signal.aborted) setLookupStatus('error'); // fail-open: never block submit
+      }
+    }, 500);
+
+    return () => {
+      clearTimeout(timer);
+      ctrl.abort();
+    };
+  }, [formData.firstName, formData.lastName]);
+
+  // Allow-list view over the static EVENTS (never mutate the const).
+  const allowedSet = useMemo(() => new Set(allowedEvents), [allowedEvents]);
+  const visibleEvents = useMemo(() => {
+    const out: Record<string, { label: string; events: { id: string; label: string }[] }> = {};
+    (Object.keys(EVENTS) as (keyof typeof EVENTS)[]).forEach((cityKey) => {
+      const city = EVENTS[cityKey];
+      const events = city.events.filter((e) => allowedSet.has(e.id));
+      if (events.length) out[cityKey] = { label: city.label, events };
+    });
+    return out;
+  }, [allowedSet]);
+  const visibleEventIds = useMemo(
+    () => Object.values(visibleEvents).flatMap((c) => c.events.map((e) => e.id)),
+    [visibleEvents]
+  );
+
+  // Drop any selected events that are no longer allowed after a lookup narrows the list.
+  useEffect(() => {
+    setFormData((prev) => {
+      const pruned = prev.selectedEvents.filter((id) => allowedSet.has(id));
+      return pruned.length === prev.selectedEvents.length ? prev : { ...prev, selectedEvents: pruned };
+    });
+  }, [allowedSet]);
+
   // Update guests array when guestCount changes
   useEffect(() => {
     const count = parseInt(formData.guestCount);
@@ -146,10 +289,8 @@ export default function RSVPForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (alreadyRSVPd) return; // defense in depth — submit is also disabled below
     setStatus('loading');
-
-    // Deployed Google Apps Script endpoint (env var overrides if set).
-    const GOOGLE_SCRIPT_URL = process.env.NEXT_PUBLIC_GOOGLE_SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbwjbQgc2IKQxT8aafz4x0qeA5uZS7NvfG8dILClUwgNp0nfzRiTXoZQI7UFskI6qbWPjQ/exec';
 
     try {
       const response = await fetch(GOOGLE_SCRIPT_URL, {
@@ -295,6 +436,37 @@ export default function RSVPForm() {
           />
         </div>
       </div>
+
+      {/* Name lookup status */}
+      {lookupStatus === 'loading' && (
+        <p className="text-sm flex items-center gap-2" style={{ color: '#6B6B6B' }}>
+          <span
+            className="w-4 h-4 rounded-full inline-block animate-spin"
+            style={{
+              border: '2px solid rgba(123, 163, 181, 0.3)',
+              borderTopColor: '#7BA3B5',
+            }}
+          />
+          Checking your invitation…
+        </p>
+      )}
+      {alreadyRSVPd && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ ease: 'easeOut' as const }}
+          className="flex items-start gap-3 p-4 rounded-lg"
+          style={{
+            background: 'rgba(232, 213, 211, 0.3)',
+            border: '1px solid rgba(232, 213, 211, 0.6)',
+          }}
+        >
+          <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" style={{ color: '#7BA3B5' }} />
+          <p className="text-sm" style={{ color: '#3D3D3D' }}>
+            We&apos;ve already received your RSVP! To make any changes, please reach out to Harsh or Deepika directly.
+          </p>
+        </motion.div>
+      )}
 
       {/* Email */}
       <div>
@@ -473,17 +645,20 @@ export default function RSVPForm() {
                   <label className="flex items-center gap-3 cursor-pointer min-h-[44px]">
                     <input
                       type="checkbox"
-                      checked={formData.selectedEvents.length === ALL_EVENT_IDS.length}
+                      checked={
+                        visibleEventIds.length > 0 &&
+                        formData.selectedEvents.length === visibleEventIds.length
+                      }
                       ref={(el) => {
                         if (el) {
                           el.indeterminate =
                             formData.selectedEvents.length > 0 &&
-                            formData.selectedEvents.length < ALL_EVENT_IDS.length;
+                            formData.selectedEvents.length < visibleEventIds.length;
                         }
                       }}
                       onChange={(e) => {
                         if (e.target.checked) {
-                          setFormData((prev) => ({ ...prev, selectedEvents: [...ALL_EVENT_IDS] }));
+                          setFormData((prev) => ({ ...prev, selectedEvents: [...visibleEventIds] }));
                         } else {
                           setFormData((prev) => ({ ...prev, selectedEvents: [] }));
                         }
@@ -504,7 +679,7 @@ export default function RSVPForm() {
                       exit={{ opacity: 0, height: 0 }}
                       className="ml-4 sm:ml-6 space-y-2 overflow-hidden"
                     >
-                      {Object.entries(EVENTS).map(([cityKey, city]) => {
+                      {Object.entries(visibleEvents).map(([cityKey, city]) => {
                         const cityEventIds = city.events.map((e) => e.id);
                         const selectedCityEvents = formData.selectedEvents.filter((id) =>
                           cityEventIds.includes(id)
@@ -639,7 +814,7 @@ export default function RSVPForm() {
       {/* Submit Button */}
       <motion.button
         type="submit"
-        disabled={status === 'loading'}
+        disabled={status === 'loading' || alreadyRSVPd}
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
         className="btn-dusty-blue w-full md:w-auto px-10 py-4 font-medium rounded-lg transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
