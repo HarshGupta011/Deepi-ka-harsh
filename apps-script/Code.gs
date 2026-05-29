@@ -21,8 +21,31 @@
 var RESPONSES_SHEET = 'Responses';
 var INVITE_SHEET = 'InviteList';
 
+// Column positions (0-based) in the Responses tab, matching the append order in
+// doPost. Used instead of header-name lookup so dedupe works whether or not the
+// sheet has a header row.
+var FIRST_NAME_COL = 2;
+var LAST_NAME_COL = 3;
+var ATTENDING_COL = 4;
+
 function ALL_EVENT_IDS() {
   return ['cocktail', 'reception', 'mehendi', 'haldi', 'yaar-di-shaadi'];
+}
+
+/**
+ * The tab RSVPs are written to. Prefers a tab literally named "Responses", but
+ * falls back to the first tab that isn't the invite list — so it works no matter
+ * what the original RSVP tab was named (Sheet1, RSVPs, "Form Responses 1", ...).
+ */
+function getResponsesSheet() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName(RESPONSES_SHEET);
+  if (sheet) return sheet;
+  var sheets = ss.getSheets();
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].getName() !== INVITE_SHEET) return sheets[i];
+  }
+  return sheets[0];
 }
 
 /**
@@ -73,20 +96,16 @@ function doGet(e) {
 
     var ss = SpreadsheetApp.getActiveSpreadsheet();
 
-    // Feature 1: duplicate check against Responses.
+    // Feature 1: duplicate check against the responses tab.
     out.alreadyRSVPd = false;
     out.existingAttending = '';
-    var resp = ss.getSheetByName(RESPONSES_SHEET);
-    if (resp && resp.getLastRow() > 1) {
+    var resp = getResponsesSheet();
+    if (resp && resp.getLastRow() > 0) {
       var rows = resp.getDataRange().getValues();
-      var h = rows[0];
-      var fI = h.indexOf('firstName');
-      var lI = h.indexOf('lastName');
-      var aI = h.indexOf('attending');
-      for (var i = 1; i < rows.length; i++) {
-        if (normalizeName(rows[i][fI], rows[i][lI]) === key) {
+      for (var i = 0; i < rows.length; i++) {
+        if (normalizeName(rows[i][FIRST_NAME_COL], rows[i][LAST_NAME_COL]) === key) {
           out.alreadyRSVPd = true;
-          out.existingAttending = aI >= 0 ? rows[i][aI] : '';
+          out.existingAttending = rows[i][ATTENDING_COL];
           break;
         }
       }
@@ -133,7 +152,7 @@ function doPost(e) {
   try {
     var data = JSON.parse(e.postData.contents);
     var key = normalizeName(data.firstName, data.lastName);
-    var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(RESPONSES_SHEET);
+    var sheet = getResponsesSheet();
 
     var row = [
       data.timestamp || new Date().toISOString(),
@@ -148,13 +167,10 @@ function doPost(e) {
       key
     ];
 
-    var values = sheet.getDataRange().getValues();
-    var h = values[0];
-    var fI = h.indexOf('firstName');
-    var lI = h.indexOf('lastName');
+    var values = sheet.getLastRow() > 0 ? sheet.getDataRange().getValues() : [];
     var matchRow = -1;
-    for (var i = 1; i < values.length; i++) {
-      if (normalizeName(values[i][fI], values[i][lI]) === key) {
+    for (var i = 0; i < values.length; i++) {
+      if (normalizeName(values[i][FIRST_NAME_COL], values[i][LAST_NAME_COL]) === key) {
         matchRow = i + 1; // 1-based sheet row
         break;
       }
