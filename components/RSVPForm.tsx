@@ -549,9 +549,9 @@ export default function RSVPForm() {
                                     if (e.target.checked) {
                                       setFormData((prev) => ({
                                         ...prev,
-                                        selectedEvents: [
-                                          ...new Set([...prev.selectedEvents, ...cityEventIds]),
-                                        ],
+                                        selectedEvents: Array.from(
+                                          new Set([...prev.selectedEvents, ...cityEventIds])
+                                        ),
                                       }));
                                     } else {
                                       setFormData((prev) => ({
