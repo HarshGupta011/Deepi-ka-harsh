@@ -9,43 +9,53 @@
  * components/RSVPForm.tsx keeps working.
  *
  * Sheet model (two tabs):
- *  - "Responses"  : submissions. Columns, in order:
- *      timestamp, email, firstName, lastName, attending, guestCount,
- *      guestNames, events, message, nameKey
- *    (nameKey is a helper column holding the normalized name for dedupe/lookup.)
- *  - "InviteList" : the allow-list. Columns:
- *      firstName, lastName, allowedEvents
- *    allowedEvents is a comma-separated list of event ids, or "ALL".
+ *  - responses tab (named "RSVPs" / "Responses" / whatever): one row per
+ *    submission. The script matches values to columns BY HEADER NAME (row 1),
+ *    so the column order can be anything. Recognized headers (case/space/
+ *    punctuation-insensitive): Timestamp, First Name, Last Name, Email,
+ *    Attending, Guest Count, Guest Names, Events, Message, nameKey.
+ *    (nameKey is an optional helper column holding the normalized name.)
+ *  - "InviteList": the allow-list. Headers: First Name, Last Name, Allowed Events.
+ *    Allowed Events is a comma-separated list of event ids, or "ALL".
  */
 
-var RESPONSES_SHEET = 'Responses';
+var RESPONSES_SHEET_NAMES = ['RSVPs', 'Responses'];
 var INVITE_SHEET = 'InviteList';
-
-// Column positions (0-based) in the Responses tab, matching the append order in
-// doPost. Used instead of header-name lookup so dedupe works whether or not the
-// sheet has a header row.
-var FIRST_NAME_COL = 2;
-var LAST_NAME_COL = 3;
-var ATTENDING_COL = 4;
 
 function ALL_EVENT_IDS() {
   return ['cocktail', 'reception', 'mehendi', 'haldi', 'yaar-di-shaadi'];
 }
 
 /**
- * The tab RSVPs are written to. Prefers a tab literally named "Responses", but
+ * The tab RSVPs are written to. Prefers a tab named "RSVPs"/"Responses", but
  * falls back to the first tab that isn't the invite list — so it works no matter
- * what the original RSVP tab was named (Sheet1, RSVPs, "Form Responses 1", ...).
+ * what the responses tab is named.
  */
 function getResponsesSheet() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var sheet = ss.getSheetByName(RESPONSES_SHEET);
-  if (sheet) return sheet;
+  for (var n = 0; n < RESPONSES_SHEET_NAMES.length; n++) {
+    var s = ss.getSheetByName(RESPONSES_SHEET_NAMES[n]);
+    if (s) return s;
+  }
   var sheets = ss.getSheets();
   for (var i = 0; i < sheets.length; i++) {
     if (sheets[i].getName() !== INVITE_SHEET) return sheets[i];
   }
   return sheets[0];
+}
+
+// Header text -> a loose key so "First Name", "firstName", "first_name" all match.
+function headerKey(h) {
+  return String(h == null ? '' : h).toLowerCase().replace(/[^a-z0-9]/g, '');
+}
+
+// Build { looseHeader: columnIndex } from a header row.
+function headerMap(header) {
+  var m = {};
+  if (header) {
+    for (var i = 0; i < header.length; i++) m[headerKey(header[i])] = i;
+  }
+  return m;
 }
 
 /**
@@ -102,10 +112,14 @@ function doGet(e) {
     var resp = getResponsesSheet();
     if (resp && resp.getLastRow() > 0) {
       var rows = resp.getDataRange().getValues();
+      var rm = headerMap(rows[0]);
+      var fI = rm.hasOwnProperty('firstname') ? rm.firstname : 1;
+      var lI = rm.hasOwnProperty('lastname') ? rm.lastname : 2;
+      var aI = rm.hasOwnProperty('attending') ? rm.attending : 4;
       for (var i = 0; i < rows.length; i++) {
-        if (normalizeName(rows[i][FIRST_NAME_COL], rows[i][LAST_NAME_COL]) === key) {
+        if (normalizeName(rows[i][fI], rows[i][lI]) === key) {
           out.alreadyRSVPd = true;
-          out.existingAttending = rows[i][ATTENDING_COL];
+          out.existingAttending = rows[i][aI];
           break;
         }
       }
@@ -117,10 +131,10 @@ function doGet(e) {
     var inv = ss.getSheetByName(INVITE_SHEET);
     if (inv && inv.getLastRow() > 1) {
       var ir = inv.getDataRange().getValues();
-      var ih = ir[0];
-      var ifI = ih.indexOf('firstName');
-      var ilI = ih.indexOf('lastName');
-      var ieI = ih.indexOf('allowedEvents');
+      var im = headerMap(ir[0]);
+      var ifI = im.hasOwnProperty('firstname') ? im.firstname : 0;
+      var ilI = im.hasOwnProperty('lastname') ? im.lastname : 1;
+      var ieI = im.hasOwnProperty('allowedevents') ? im.allowedevents : 2;
       for (var j = 1; j < ir.length; j++) {
         if (normalizeName(ir[j][ifI], ir[j][ilI]) === key) {
           out.found = true;
@@ -141,6 +155,33 @@ function doGet(e) {
   return respond(out, p.callback);
 }
 
+// Map a submission's fields to a row aligned to the sheet's header columns.
+// Falls back to a fixed order (Timestamp, First, Last, Email, Attending, ...)
+// only if the sheet has no recognizable header.
+function buildRow(data, key, header) {
+  var fields = {
+    timestamp: data.timestamp || new Date().toISOString(),
+    firstname: data.firstName,
+    lastname: data.lastName,
+    email: data.email,
+    attending: data.attending,
+    guestcount: data.guestCount,
+    guestnames: data.guestNames,
+    events: data.events,
+    message: data.message,
+    namekey: key
+  };
+  if (header && headerMap(header).hasOwnProperty('firstname')) {
+    return header.map(function (h) {
+      var k = headerKey(h);
+      return fields.hasOwnProperty(k) ? fields[k] : '';
+    });
+  }
+  return [fields.timestamp, fields.firstname, fields.lastname, fields.email,
+          fields.attending, fields.guestcount, fields.guestnames, fields.events,
+          fields.message, fields.namekey];
+}
+
 /**
  * Write endpoint. Upserts by normalized name (most-recent-wins) so a guest who
  * RSVPs twice produces one row, not two. LockService serializes concurrent
@@ -154,28 +195,21 @@ function doPost(e) {
     var key = normalizeName(data.firstName, data.lastName);
     var sheet = getResponsesSheet();
 
-    var row = [
-      data.timestamp || new Date().toISOString(),
-      data.email,
-      data.firstName,
-      data.lastName,
-      data.attending,
-      data.guestCount,
-      data.guestNames,
-      data.events,
-      data.message,
-      key
-    ];
-
     var values = sheet.getLastRow() > 0 ? sheet.getDataRange().getValues() : [];
+    var header = values.length ? values[0] : null;
+    var m = headerMap(header);
+    var fI = m.hasOwnProperty('firstname') ? m.firstname : 1;
+    var lI = m.hasOwnProperty('lastname') ? m.lastname : 2;
+
     var matchRow = -1;
     for (var i = 0; i < values.length; i++) {
-      if (normalizeName(values[i][FIRST_NAME_COL], values[i][LAST_NAME_COL]) === key) {
+      if (normalizeName(values[i][fI], values[i][lI]) === key) {
         matchRow = i + 1; // 1-based sheet row
         break;
       }
     }
 
+    var row = buildRow(data, key, header);
     if (matchRow > 0) {
       sheet.getRange(matchRow, 1, 1, row.length).setValues([row]);
     } else {
