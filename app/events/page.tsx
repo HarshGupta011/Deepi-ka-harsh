@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { Clock, MapPin, Shirt, Sparkles, ExternalLink, Building2 } from 'lucide-react';
@@ -166,6 +166,13 @@ const events: EventType[] = [
 
 function EventCard({ event, index }: { event: EventType; index: number }) {
   const [isFlipped, setIsFlipped] = useState(false);
+  const backRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (isFlipped && backRef.current) {
+      backRef.current.scrollTop = 0;
+    }
+  }, [isFlipped]);
 
   const handleFlip = () => {
     setIsFlipped(!isFlipped);
@@ -194,7 +201,10 @@ function EventCard({ event, index }: { event: EventType; index: number }) {
         aria-label={`${event.name} event card. Click to ${isFlipped ? 'see image' : 'see details'}`}
       >
         {/* Front of card */}
-        <div className="absolute inset-0 backface-hidden rounded-2xl overflow-hidden shadow-xl">
+        <div
+          className="absolute inset-0 backface-hidden rounded-2xl overflow-hidden shadow-xl"
+          style={{ pointerEvents: isFlipped ? 'none' : 'auto' }}
+        >
           <div className="relative w-full h-full">
             <Image
               src={event.image}
@@ -228,9 +238,13 @@ function EventCard({ event, index }: { event: EventType; index: number }) {
         {/* Back of card */}
         <div
           className="absolute inset-0 backface-hidden rotate-y-180 rounded-2xl overflow-hidden shadow-xl"
-          style={{ backgroundColor: '#FFFEF9' }}
+          style={{ backgroundColor: '#FFFEF9', pointerEvents: isFlipped ? 'auto' : 'none' }}
         >
-          <div className="h-full flex flex-col p-6 md:p-8 overflow-y-auto">
+          <div
+            ref={backRef}
+            className="h-full flex flex-col p-6 md:p-8 overflow-y-auto"
+            style={{ WebkitOverflowScrolling: 'touch', overscrollBehavior: 'contain', touchAction: 'pan-y' }}
+          >
             {/* Header */}
             <div
               className="text-center pb-4 mb-4"
