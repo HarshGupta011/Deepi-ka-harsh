@@ -26,6 +26,29 @@ function ALL_EVENT_IDS() {
   return ['cocktail', 'reception', 'mehendi', 'haldi', 'yaar-di-shaadi'];
 }
 
+// Event id -> human label, mirroring the EVENTS const in components/RSVPForm.tsx.
+// Used to render readable event names in the confirmation email.
+var EVENT_LABELS = {
+  'cocktail': 'Cocktail Party',
+  'reception': 'Reception',
+  'mehendi': 'Mehendi',
+  'haldi': 'Haldi',
+  'yaar-di-shaadi': 'Yaar Di Shaadi'
+};
+
+// Reply-to / contact address shown on confirmation emails.
+var COUPLE_CONTACT_EMAIL = 'deepika23shekar@gmail.com';
+
+// Font stacks for the email. Body mirrors the website (Source Code Pro). The
+// site's handwritten script heading renders poorly in mail clients, so the
+// heading uses Playfair Display — an elegant serif also imported by the site
+// (app/globals.css). Clients that support web fonts (Apple Mail, iOS Mail) load
+// these via @import; Gmail strips them and uses the fallbacks, so each stack
+// ends in a safe system fallback.
+var FONT_HEADING = "'Playfair Display', Georgia, 'Times New Roman', serif";
+var FONT_BODY = "'Source Code Pro', 'Courier New', Consolas, monospace";
+var FONT_IMPORT = "@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&family=Source+Code+Pro:wght@300;400;500&display=swap');";
+
 /**
  * The tab RSVPs are written to. Prefers a tab named "RSVPs"/"Responses", but
  * falls back to the first tab that isn't the invite list — so it works no matter
@@ -216,10 +239,130 @@ function doPost(e) {
       sheet.appendRow(row);
     }
 
+    sendConfirmationEmail(data); // self-guards; never throws
+
     return respond({ ok: true, upserted: matchRow > 0 }, e.parameter && e.parameter.callback);
   } catch (err) {
     return respond({ ok: false, error: String(err) }, null);
   } finally {
     lock.releaseLock();
   }
+}
+
+/**
+ * Sends a branded HTML confirmation email to the (primary) guest after an RSVP.
+ * Self-contained and fail-safe: it validates the address and swallows any send
+ * error (quota, transient failure) so a mail problem can never break the RSVP
+ * write or change the doPost response. Attendees get an event list; decliners
+ * get a short "we'll miss you" note. Called for every successful submit, so a
+ * re-RSVP (upsert) also re-confirms.
+ */
+function sendConfirmationEmail(data) {
+  try {
+    var email = data && data.email ? String(data.email).trim() : '';
+    if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return;
+
+    var first = data.firstName ? String(data.firstName).trim() : '';
+    var greeting = first ? 'Dear ' + escapeHtml(first) + ',' : 'Hello,';
+    var attending = String(data.attending || '');
+    var isAttending = attending === 'Joyfully Accepts';
+
+    // Readable event labels from the comma-separated ids.
+    var eventLabels = String(data.events || '').split(',')
+      .map(function (s) { return s.trim(); })
+      .filter(function (s) { return s.length > 0; })
+      .map(function (id) { return EVENT_LABELS[id] || id; });
+
+    var plusOne = String(data.guestCount || '') === '2';
+    var plusOneName = String(data.guestNames || '').trim();
+
+    var subject, intro, bodyHtml, bodyText;
+
+    if (isAttending) {
+      subject = 'Your RSVP is confirmed — Deepika & Harsh';
+      intro = 'We are overjoyed that you’ll be celebrating with us! Your RSVP is confirmed. 💛';
+
+      var eventsHtml = '';
+      var eventsText = '';
+      if (eventLabels.length) {
+        var items = eventLabels.map(function (l) {
+          return '<li style="margin:0 0 6px 0;">' + escapeHtml(l) + '</li>';
+        }).join('');
+        eventsHtml =
+          '<p style="margin:24px 0 8px 0;font-weight:600;color:#3D3D3D;font-size:15px;font-family:' + FONT_BODY + ';">We’ll see you at:</p>' +
+          '<ul style="margin:0;padding-left:20px;color:#3D3D3D;font-size:15px;font-family:' + FONT_BODY + ';">' + items + '</ul>';
+        eventsText = '\n\nWe’ll see you at:\n- ' + eventLabels.join('\n- ');
+      }
+
+      var plusOneHtml = '';
+      var plusOneText = '';
+      if (plusOne) {
+        var who = plusOneName ? escapeHtml(plusOneName) : 'your +1';
+        plusOneHtml = '<p style="margin:16px 0 0 0;color:#3D3D3D;font-size:15px;font-family:' + FONT_BODY + ';">We’ve noted that your guest, <strong>' +
+          who + '</strong>, will also be joining us.</p>';
+        plusOneText = '\n\nWe’ve noted that your guest, ' + (plusOneName || 'your +1') + ', will also be joining us.';
+      }
+
+      bodyHtml = eventsHtml + plusOneHtml +
+        '<p style="margin:24px 0 0 0;color:#3D3D3D;font-size:15px;line-height:1.7;font-family:' + FONT_BODY + ';">We can’t wait to make beautiful memories with you. If anything changes, we’d love to hear from you — just reach out to us!</p>';
+      bodyText = eventsText + plusOneText +
+        '\n\nWe can’t wait to make beautiful memories with you. If anything changes, we’d love to hear from you — just reach out to us!';
+    } else {
+      subject = 'We’ll miss you — Deepika & Harsh';
+      intro = 'Thank you for letting us know. We’re so sorry you won’t be able to join us — you’ll be missed, and we’ll be thinking of you.';
+      bodyHtml = '<p style="margin:24px 0 0 0;color:#3D3D3D;font-size:15px;line-height:1.7;font-family:' + FONT_BODY + ';">If your plans change, you’re always welcome — just reach out to us!</p>';
+      bodyText = '\n\nIf your plans change, you’re always welcome — just reach out to us!';
+    }
+
+    var html =
+      '<!DOCTYPE html><html><head><meta charset="utf-8">' +
+      '<meta name="viewport" content="width=device-width,initial-scale=1">' +
+      '<style>' + FONT_IMPORT + '</style></head>' +
+      '<body style="margin:0;padding:0;background-color:#FBF8F3;">' +
+      '<div style="background-color:#FBF8F3;padding:32px 16px;font-family:' + FONT_BODY + ';">' +
+        '<div style="max-width:560px;margin:0 auto;background:#FFFFFF;border:1px solid #ECE4D8;border-radius:12px;overflow:hidden;">' +
+          '<div style="background:#FBF8F3;padding:28px 32px;text-align:center;border-bottom:1px solid #ECE4D8;">' +
+            '<p style="margin:0;letter-spacing:2px;font-size:12px;color:#B08D57;text-transform:uppercase;font-family:' + FONT_BODY + ';">The Wedding of</p>' +
+            '<h1 style="margin:10px 0 0 0;font-size:34px;line-height:1.2;color:#3D3D3D;font-weight:500;letter-spacing:0.5px;font-family:' + FONT_HEADING + ';">Deepika &amp; Harsh</h1>' +
+          '</div>' +
+          '<div style="padding:32px;font-family:' + FONT_BODY + ';">' +
+            '<p style="margin:0 0 16px 0;color:#3D3D3D;font-size:15px;font-family:' + FONT_BODY + ';">' + greeting + '</p>' +
+            '<p style="margin:0;color:#3D3D3D;font-size:15px;line-height:1.7;font-family:' + FONT_BODY + ';">' + intro + '</p>' +
+            bodyHtml +
+            '<p style="margin:32px 0 0 0;color:#3D3D3D;font-size:15px;font-family:' + FONT_BODY + ';">With love,<br/>' +
+              '<span style="font-family:' + FONT_HEADING + ';font-size:18px;font-style:italic;color:#3D3D3D;">Deepika &amp; Harsh</span></p>' +
+          '</div>' +
+          '<div style="background:#FBF8F3;padding:16px 32px;text-align:center;border-top:1px solid #ECE4D8;">' +
+            '<p style="margin:0;font-size:12px;color:#9A9A9A;font-family:' + FONT_BODY + ';">This is an automated confirmation. We’d love to hear from you — for any changes, just reach out to us!</p>' +
+          '</div>' +
+        '</div>' +
+      '</div></body></html>';
+
+    var text =
+      (first ? 'Dear ' + first + ',' : 'Hello,') + '\n\n' +
+      intro +
+      bodyText +
+      '\n\nWith love,\nDeepika & Harsh';
+
+    MailApp.sendEmail({
+      to: email,
+      subject: subject,
+      name: 'Deepika & Harsh',
+      replyTo: COUPLE_CONTACT_EMAIL,
+      htmlBody: html,
+      body: text
+    });
+  } catch (mailErr) {
+    // Never let a mail failure affect the RSVP write.
+    try { console.log('sendConfirmationEmail failed: ' + mailErr); } catch (ignore) {}
+  }
+}
+
+// Minimal HTML escaping for user-supplied values interpolated into the email.
+function escapeHtml(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
 }
