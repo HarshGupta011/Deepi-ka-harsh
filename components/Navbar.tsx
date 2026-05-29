@@ -34,19 +34,21 @@ export default function Navbar() {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.6 }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled ? 'backdrop-blur-md shadow-soft' : 'bg-transparent'
-      }`}
-      style={scrolled ? {
-        background: 'rgba(250, 248, 245, 0.95)',
-        borderBottom: '1px solid rgba(201, 184, 150, 0.3)',
-      } : {}}
+      className="fixed top-0 left-0 right-0 z-50 transition-all duration-300 backdrop-blur-sm"
+      style={{
+        background: scrolled
+          ? 'rgba(250, 248, 245, 0.5)'
+          : 'rgba(250, 248, 245, 0.25)',
+        boxShadow: scrolled
+          ? '0 2px 10px rgba(0, 0, 0, 0.05)'
+          : 'none',
+      }}
     >
       <div className="container-wedding">
-        {/* Centered Layout */}
-        <div className="flex flex-col items-center py-1.5 md:py-2">
+        {/* Mobile: Row layout | Desktop: Centered column */}
+        <div className="flex items-center justify-between py-2 md:flex-col md:items-center md:justify-center md:py-2">
           {/* Logo - Centered */}
-          <Link href="/" className="mb-0.5 md:mb-1">
+          <Link href="/" className="md:mb-1">
             <span
               className="font-signature text-lg md:text-xl transition-all duration-300 hover:opacity-70"
               style={{ color: '#3D3D3D' }}
@@ -76,7 +78,7 @@ export default function Navbar() {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden absolute right-4 top-2 p-1.5 hover:opacity-70 transition-all duration-300 rounded-lg"
+            className="md:hidden p-2 hover:opacity-70 transition-all duration-300 rounded-lg"
             style={{
               color: '#3D3D3D',
               background: isOpen ? 'rgba(123, 163, 181, 0.1)' : 'transparent',

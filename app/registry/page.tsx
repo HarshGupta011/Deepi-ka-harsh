@@ -37,7 +37,7 @@ export default function RegistryPage() {
     <>
       {/* Hero Section - Sage Pastel */}
       <section
-        className="relative py-24 md:py-32 overflow-hidden"
+        className="relative py-12 md:py-16 overflow-hidden -mt-16 md:-mt-20 pt-28 md:pt-36"
         style={{
           background: '#E8F0E2',
         }}
@@ -69,7 +69,7 @@ export default function RegistryPage() {
             </motion.div>
 
             <h1
-              className="font-script text-5xl md:text-7xl lg:text-8xl mb-6"
+              className="font-script text-3xl sm:text-5xl md:text-7xl lg:text-8xl mb-6"
               style={{ color: '#3D3D3D' }}
             >
               Gift Registry

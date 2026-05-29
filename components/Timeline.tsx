@@ -19,7 +19,7 @@ interface TimelineProps {
 export default function Timeline({ events }: TimelineProps) {
   return (
     <div className="relative max-w-6xl mx-auto">
-      {/* Center vertical line */}
+      {/* Desktop center vertical line */}
       <div
         className="hidden md:block absolute left-1/2 top-0 bottom-0 w-px -translate-x-1/2"
         style={{
@@ -27,7 +27,15 @@ export default function Timeline({ events }: TimelineProps) {
         }}
       />
 
-      <div className="space-y-16 md:space-y-24">
+      {/* Mobile left rail */}
+      <div
+        className="md:hidden absolute left-4 top-0 bottom-0 w-px"
+        style={{
+          background: 'linear-gradient(180deg, transparent, #C9B896 4%, #C9B896 96%, transparent)',
+        }}
+      />
+
+      <div className="space-y-14 md:space-y-24">
         {events.map((event, index) => (
           <motion.div
             key={index}
@@ -35,9 +43,9 @@ export default function Timeline({ events }: TimelineProps) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-50px' }}
             transition={{ duration: 0.6 }}
-            className="relative"
+            className="relative pl-12 md:pl-0"
           >
-            {/* Heart marker on center line */}
+            {/* Desktop heart marker on center line */}
             <div
               className="hidden md:flex absolute left-1/2 top-0 -translate-x-1/2 w-10 h-10 rounded-full items-center justify-center z-10"
               style={{
@@ -49,8 +57,55 @@ export default function Timeline({ events }: TimelineProps) {
               <Heart className="w-4 h-4" style={{ color: '#E8D5D3' }} fill="currentColor" />
             </div>
 
-            {/* Content grid */}
-            <div className="flex flex-col md:grid md:grid-cols-2 gap-8 md:gap-0 items-start">
+            {/* Mobile heart marker on left rail */}
+            <div
+              className="md:hidden absolute left-4 top-1 -translate-x-1/2 w-8 h-8 rounded-full flex items-center justify-center z-10"
+              style={{
+                background: '#FFFEF9',
+                border: '2px solid #C9B896',
+                boxShadow: '0 4px 12px rgba(201, 184, 150, 0.3)',
+              }}
+            >
+              <Heart className="w-3.5 h-3.5" style={{ color: '#E8D5D3' }} fill="currentColor" />
+            </div>
+
+            {/* Mobile layout: date, photo, then title + description */}
+            <div className="md:hidden">
+              <span
+                className="inline-block px-4 py-1.5 text-sm font-medium rounded-full mb-4"
+                style={{
+                  background: 'rgba(123, 163, 181, 0.15)',
+                  color: '#5A8899',
+                }}
+              >
+                {event.date}
+              </span>
+
+              {event.image && (
+                <div className="relative w-full aspect-square rounded-2xl overflow-hidden shadow-lg mb-4">
+                  <Image
+                    src={event.image}
+                    alt={event.title}
+                    fill
+                    className="object-cover"
+                    style={{ objectPosition: event.imagePosition || 'center' }}
+                  />
+                </div>
+              )}
+
+              <h3 className="text-2xl font-serif mb-2" style={{ color: '#3D3D3D' }}>
+                {event.title}
+              </h3>
+              <p
+                className="text-base leading-relaxed whitespace-pre-line"
+                style={{ color: '#6B6B6B' }}
+              >
+                {event.description}
+              </p>
+            </div>
+
+            {/* Desktop layout: alternating two-column grid */}
+            <div className="hidden md:grid md:grid-cols-2 md:gap-0 items-start">
               {/* Left side - always has right padding to stay away from center */}
               <div className="md:pr-20">
                 {index % 2 === 0 ? (
@@ -72,7 +127,7 @@ export default function Timeline({ events }: TimelineProps) {
                   )
                 ) : (
                   // Odd: Text on left
-                  <div className="text-center md:text-right ml-auto max-w-sm">
+                  <div className="text-right ml-auto max-w-sm">
                     <span
                       className="inline-block px-5 py-2 text-sm font-medium rounded-full mb-4"
                       style={{
@@ -82,16 +137,10 @@ export default function Timeline({ events }: TimelineProps) {
                     >
                       {event.date}
                     </span>
-                    <h3
-                      className="text-2xl md:text-3xl font-serif mb-3"
-                      style={{ color: '#3D3D3D' }}
-                    >
+                    <h3 className="text-3xl font-serif mb-3" style={{ color: '#3D3D3D' }}>
                       {event.title}
                     </h3>
-                    <p
-                      className="text-lg leading-relaxed whitespace-pre-line"
-                      style={{ color: '#6B6B6B' }}
-                    >
+                    <p className="text-lg leading-relaxed whitespace-pre-line" style={{ color: '#6B6B6B' }}>
                       {event.description}
                     </p>
                   </div>
@@ -102,7 +151,7 @@ export default function Timeline({ events }: TimelineProps) {
               <div className="md:pl-20">
                 {index % 2 === 0 ? (
                   // Even: Text on right
-                  <div className="text-center md:text-left mr-auto max-w-sm">
+                  <div className="text-left mr-auto max-w-sm">
                     <span
                       className="inline-block px-5 py-2 text-sm font-medium rounded-full mb-4"
                       style={{
@@ -112,16 +161,10 @@ export default function Timeline({ events }: TimelineProps) {
                     >
                       {event.date}
                     </span>
-                    <h3
-                      className="text-2xl md:text-3xl font-serif mb-3"
-                      style={{ color: '#3D3D3D' }}
-                    >
+                    <h3 className="text-3xl font-serif mb-3" style={{ color: '#3D3D3D' }}>
                       {event.title}
                     </h3>
-                    <p
-                      className="text-lg leading-relaxed whitespace-pre-line"
-                      style={{ color: '#6B6B6B' }}
-                    >
+                    <p className="text-lg leading-relaxed whitespace-pre-line" style={{ color: '#6B6B6B' }}>
                       {event.description}
                     </p>
                   </div>

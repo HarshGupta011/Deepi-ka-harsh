@@ -32,7 +32,7 @@ export default function Home() {
         transition={{ duration: 0.6, ease: 'easeOut' }}
       >
         {/* Hero Section - Clean & Minimal like reference */}
-        <section className="relative h-screen flex items-end justify-center pb-20 md:pb-32 overflow-hidden">
+        <section className="relative h-screen flex items-end justify-center pb-20 md:pb-32 overflow-hidden -mt-16 md:-mt-20">
           {/* Background Slideshow */}
           <HeroSlideshow
             images={[
@@ -51,7 +51,7 @@ export default function Home() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: isOpen ? 1 : 0, y: isOpen ? 0 : 30 }}
               transition={{ delay: 0.4, duration: 0.6 }}
-              className="font-names text-5xl md:text-7xl lg:text-8xl mb-6 text-white"
+              className="font-names text-3xl sm:text-5xl md:text-7xl lg:text-8xl mb-6 text-white"
               style={{
                 textShadow: '0 2px 10px rgba(0,0,0,0.3)',
               }}
@@ -171,7 +171,7 @@ export default function Home() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="font-names text-5xl md:text-6xl mb-2"
+              className="font-names text-3xl sm:text-5xl md:text-6xl mb-2"
               style={{ color: '#3D3D3D', textShadow: '0 2px 8px rgba(255,255,255,0.8)' }}
             >
               Two State Wedding
