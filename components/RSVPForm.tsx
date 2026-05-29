@@ -353,24 +353,22 @@ export default function RSVPForm() {
           animate={{ opacity: 1, height: 'auto' }}
           className="space-y-6"
         >
-          {/* Guest Count */}
+          {/* +1 toggle */}
           <div>
-            <label htmlFor="guestCount" className="block text-sm font-medium mb-2" style={{ color: '#3D3D3D' }}>
-              Number of Guests
+            <label className="flex items-center gap-3 cursor-pointer select-none">
+              <input
+                type="checkbox"
+                checked={formData.guestCount === '2'}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, guestCount: e.target.checked ? '2' : '1' }))
+                }
+                className="w-4 h-4 rounded"
+                style={{ accentColor: '#7BA3B5' }}
+              />
+              <span className="text-sm font-medium" style={{ color: '#3D3D3D' }}>
+                I&apos;m bringing a guest (+1)
+              </span>
             </label>
-            <select
-              id="guestCount"
-              name="guestCount"
-              value={formData.guestCount}
-              onChange={handleChange}
-              className="input-elegant w-full md:w-48"
-            >
-              {[1, 2, 3, 4, 5].map((num) => (
-                <option key={num} value={num}>
-                  {num} {num === 1 ? 'Guest' : 'Guests'}
-                </option>
-              ))}
-            </select>
           </div>
 
           {/* Additional Guest Names */}
@@ -392,7 +390,7 @@ export default function RSVPForm() {
                     }}
                   >
                     <p className="text-sm font-medium mb-3" style={{ color: '#7BA3B5' }}>
-                      Guest {index + 2}
+                      Your guest (+1)
                     </p>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
