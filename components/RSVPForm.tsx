@@ -148,8 +148,8 @@ export default function RSVPForm() {
     e.preventDefault();
     setStatus('loading');
 
-    // Google Apps Script URL - replace with your deployed script URL
-    const GOOGLE_SCRIPT_URL = process.env.NEXT_PUBLIC_GOOGLE_SCRIPT_URL || 'YOUR_GOOGLE_SCRIPT_URL';
+    // Deployed Google Apps Script endpoint (env var overrides if set).
+    const GOOGLE_SCRIPT_URL = process.env.NEXT_PUBLIC_GOOGLE_SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbwjbQgc2IKQxT8aafz4x0qeA5uZS7NvfG8dILClUwgNp0nfzRiTXoZQI7UFskI6qbWPjQ/exec';
 
     try {
       const response = await fetch(GOOGLE_SCRIPT_URL, {
