@@ -11,39 +11,39 @@ const timelineEvents = [
     date: '2016',
     title: 'The Beginning — Bangalore Days',
     description:
-      "Deepika, a Bangalore girl. Harsh, straight out of Kolkata.\n\nThey met during undergrad in Bangalore, where it all started with friendship, group projects, random conversations, and spending way too much time together “just as friends.”\n\nSomewhere between classes, chai breaks, and campus life… they started liking each other a little more than expected.",
+      "Deepika, a Bangalore girl. Harsh, straight out of Kolkata.\n\nWe met during undergrad in Bangalore, where it all started with friendship, group projects, random conversations, and spending way too much time together “just as friends.”",
     image: '/images/first-meeting.png',
     imagePosition: 'center top',
   },
   {
     date: '2018',
-    title: 'From Friends to Something More',
+    title: 'From Friends to Something More 😉',
     description:
-      "What started as an easy friendship slowly turned into late-night calls, inside jokes, constant food plans, and becoming each other’s favorite person.\n\nCollege may have given them degrees, but it also gave them this.",
+      "What started as an easy friendship slowly turned into late-night calls, inside jokes, constant food plans, and becoming each other’s favorite person.\n\nTurns out the most important thing we took away from college wasn’t the degree.",
     image: '/images/gallery/d570c152-af13-4e3f-9394-690f0e7c7c9b_Original.jpg',
     imagePosition: 'center bottom',
   },
   {
-    date: '2020',
+    date: '2021 – 2022',
     title: 'The Big Move — USA Era Begins',
     description:
-      "Deepika moved to the US to pursue her higher studies in Arizona.\n\nAnd Harsh? Well… let’s just say he coincidentally also decided America sounded like a great idea.\n\nHe moved to Colorado for his studies, and suddenly their story became one of airports, countdowns, FaceTimes, and figuring life out together from different states.",
+      "Deepika moved to the US for higher studies in Arizona.\n\nAnd Harsh? Well… let’s just say he coincidentally decided America sounded like a great idea too — and moved to Colorado.\n\nJust like that, our story became one of airports, countdowns, FaceTimes, and figuring life out together from different states.",
     image: '/images/graduation.jpg',
     imagePosition: 'center',
   },
   {
-    date: '2021 – 2023',
+    date: '2023 – 2024',
     title: 'Growing Together, Miles Apart',
     description:
-      "Arizona and Colorado eventually turned into Austin and California. Different cities. Different jobs. Different time zones sometimes — but somehow, never different priorities.\n\nThrough career changes, stressful days, cross-country flights, and endless “when are you visiting next?” conversations, they kept showing up for each other.\n\nLong distance didn’t make them drift apart. It made them stronger.",
+      "Arizona and Colorado eventually turned into Austin and California. Different cities. Different jobs. Different time zones sometimes — but somehow, never different priorities.\n\nThrough career changes, stressful days, cross-country flights, and endless “when are you visiting next?” conversations, we kept showing up for each other.",
     image: '/images/cowboy.jpg',
     imagePosition: 'center',
   },
   {
-    date: 'September 2024',
+    date: 'September 2025',
     title: 'The Proposal',
     description:
-      "After years of growing together through every phase of life, Harsh finally asked the question Deepika already knew the answer to.\n\nA beautiful proposal, a very emotional “yes,” and the easiest decision they’ve ever made.",
+      "After years of growing together through every phase of life, Harsh finally asked the question Deepika already knew the answer to.\n\nA beautiful proposal, a very emotional “yes,” and the easiest decision we’ve ever made.",
     image: '/images/proposal.jpg',
     imagePosition: 'center 40%',
   },
@@ -51,7 +51,7 @@ const timelineEvents = [
     date: '2025 – 2026',
     title: 'California, Finally',
     description:
-      "After years of different cities and long-distance flights, life finally brought them both to California.\n\nNo more airport goodbyes. No more countdown apps. Just the two of them, building a life together in the same city at last.",
+      "After years of different cities and long-distance flights, life finally brought us both to California.\n\nNo more airport goodbyes. No more countdown apps. Just the two of us, building a life together in the same city at last.",
     image: '/images/waterfall-hug.jpg',
     imagePosition: 'center',
   },
@@ -59,7 +59,7 @@ const timelineEvents = [
     date: 'December 2026',
     title: 'The Wedding Knot',
     description:
-      "From Bangalore to Kolkata. From Arizona to Colorado. From Austin to California.\n\nA story built across cities, time zones, careers, and years of growing together — now leading to forever.\n\nAnd now… they’re finally ready to tie the knot.\n\nDeepi-ka-Harsh ♡",
+      "From Bangalore to Kolkata. From Arizona to Colorado. From Austin to California.\n\nA story built across cities, time zones, careers, and years of growing together\n\nAnd now… we’re finally ready to tie the knot.\n\nDeepi-ka-Harsh ♡",
     image: '/images/helicopter-ring.jpg',
     imagePosition: 'center',
   },
