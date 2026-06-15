@@ -73,9 +73,9 @@ h1, h2, h3, h4, h5, h6 {
   letter-spacing: 0;
 }
 
-/* Display serif — page titles & section headings */
+/* Script — page titles & section headings (use .font-serif for Playfair) */
 .font-script {
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: 'Great Vibes', cursive;
 }
 
 /* Elegant script — reserved for couple names, logo, signature moments */

@@ -122,7 +122,7 @@ export default function Home() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="font-script italic text-2xl md:text-3xl mb-3"
+              className="font-serif italic text-2xl md:text-3xl mb-3"
               style={{ color: 'var(--warm-gray)' }}
             >
               Yay! It&apos;s finally happening!
@@ -133,7 +133,7 @@ export default function Home() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.05 }}
-              className="font-script text-4xl md:text-5xl lg:text-6xl mb-8"
+              className="font-serif text-4xl md:text-5xl lg:text-6xl mb-8"
               style={{ color: 'var(--charcoal)' }}
             >
               We&apos;re getting married!!!
