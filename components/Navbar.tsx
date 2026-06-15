@@ -13,7 +13,6 @@ const navLinks = [
   { href: '/things-to-do', label: 'Things to Do' },
   { href: '/rsvp', label: 'RSVP' },
   { href: '/gallery', label: 'Gallery' },
-  { href: '/registry', label: 'Registry' },
   { href: '/faq', label: 'FAQs' },
 ];
 
