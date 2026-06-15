@@ -102,9 +102,11 @@ const config: Config = {
         },
       },
       fontFamily: {
-        serif: ['Nothing You Could Do', 'cursive'],
-        sans: ['Source Code Pro', 'monospace'],
-        script: ['Nothing You Could Do', 'cursive'],
+        serif: ['Playfair Display', 'Georgia', 'serif'],
+        sans: ['Figtree', 'system-ui', 'sans-serif'],
+        // No `script` key on purpose: `.font-script` is defined in globals.css
+        // (Playfair display serif). A theme key here would generate a competing
+        // Tailwind utility and override it.
       },
       animation: {
         'fade-in': 'fadeIn 1s ease-out',

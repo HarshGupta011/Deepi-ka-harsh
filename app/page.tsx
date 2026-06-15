@@ -56,31 +56,40 @@ export default function Home() {
 
           {/* Content - Names and Date */}
           <div className="relative z-10 text-center px-4">
-            {/* Names */}
+            {/* Names — signature script with a word-by-word reveal */}
             <motion.h1
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: isOpen ? 1 : 0, y: isOpen ? 0 : 30 }}
-              transition={{ delay: 0.4, duration: 0.6 }}
-              className="font-names text-3xl sm:text-5xl md:text-7xl lg:text-8xl mb-6 text-white"
-              style={{
-                textShadow: '0 2px 10px rgba(0,0,0,0.3)',
+              variants={{
+                hidden: {},
+                show: { transition: { staggerChildren: 0.14, delayChildren: 0.4 } },
               }}
+              initial="hidden"
+              animate={isOpen ? 'show' : 'hidden'}
+              className="font-names text-5xl sm:text-6xl md:text-7xl lg:text-8xl mb-6 text-white flex flex-wrap items-center justify-center gap-x-5"
+              style={{ textShadow: '0 2px 14px rgba(0,0,0,0.35)' }}
             >
-              Deepika & Harsh
+              {['Deepika', '&', 'Harsh'].map((word) => (
+                <motion.span
+                  key={word}
+                  variants={{
+                    hidden: { opacity: 0, y: 28 },
+                    show: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] as const } },
+                  }}
+                  className="inline-block"
+                >
+                  {word}
+                </motion.span>
+              ))}
             </motion.h1>
 
             {/* Date | Location */}
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: isOpen ? 1 : 0 }}
-              transition={{ delay: 0.6, duration: 0.5 }}
-              className="text-lg md:text-xl text-white font-light tracking-wide"
-              style={{
-                fontFamily: "'Source Code Pro', monospace",
-                textShadow: '0 1px 5px rgba(0,0,0,0.3)',
-              }}
+              transition={{ delay: 1.1, duration: 0.6 }}
+              className="text-sm md:text-base text-white font-light uppercase tracking-[0.25em]"
+              style={{ textShadow: '0 1px 5px rgba(0,0,0,0.3)' }}
             >
-              December 13, 2026 | Kolkata
+              December 13, 2026&nbsp;&nbsp;·&nbsp;&nbsp;Kolkata
             </motion.p>
           </div>
 
@@ -105,7 +114,7 @@ export default function Home() {
         <section
           className="py-20 md:py-28 px-4 md:px-8 relative overflow-hidden"
           style={{
-            background: '#FAF8F5',
+            background: 'var(--cream)',
           }}
         >
           <div className="max-w-3xl mx-auto text-center relative z-10">
@@ -113,8 +122,8 @@ export default function Home() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="font-names text-2xl md:text-3xl mb-2"
-              style={{ color: '#3D3D3D' }}
+              className="font-script italic text-2xl md:text-3xl mb-3"
+              style={{ color: 'var(--warm-gray)' }}
             >
               Yay! It&apos;s finally happening!
             </motion.p>
@@ -124,8 +133,8 @@ export default function Home() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.05 }}
-              className="font-names text-4xl md:text-5xl lg:text-6xl mb-8"
-              style={{ color: '#3D3D3D' }}
+              className="font-script text-4xl md:text-5xl lg:text-6xl mb-8"
+              style={{ color: 'var(--charcoal)' }}
             >
               We&apos;re getting married!!!
             </motion.h2>
@@ -136,7 +145,7 @@ export default function Home() {
               viewport={{ once: true }}
               transition={{ delay: 0.1 }}
               className="text-base md:text-lg leading-relaxed mb-6"
-              style={{ color: '#6B6B6B', fontFamily: "'Source Code Pro', monospace" }}
+              style={{ color: 'var(--warm-gray)' }}
             >
               Think big Indian wedding energy, just a little more us, with travel, great food to obsess over, glam looks, dance floors, endless photos and reels, and a whole lot of fun together.
             </motion.p>
@@ -147,7 +156,7 @@ export default function Home() {
               viewport={{ once: true }}
               transition={{ delay: 0.15 }}
               className="text-base md:text-lg leading-relaxed mb-10"
-              style={{ color: '#6B6B6B', fontFamily: "'Source Code Pro', monospace" }}
+              style={{ color: 'var(--warm-gray)' }}
             >
               We&apos;re so excited to celebrate this special moment with all our favorite people and feel incredibly grateful to have you as part of our journey.
             </motion.p>
@@ -160,9 +169,9 @@ export default function Home() {
             >
               <Link
                 href="/rsvp"
-                className="inline-block px-10 py-3 rounded-full text-white tracking-wide transition-all duration-300 hover:opacity-90"
+                className="inline-block px-12 py-3.5 rounded-full text-white text-sm uppercase tracking-[0.15em] transition-all duration-300 hover:-translate-y-0.5 shadow-dusty-blue"
                 style={{
-                  background: '#C4A484',
+                  background: 'var(--dusty-blue)',
                 }}
               >
                 RSVP
@@ -183,15 +192,15 @@ export default function Home() {
         </section>
 
         {/* Explore Section */}
-        <section className="py-16 md:py-24 px-4 md:px-8" style={{ background: '#F5EDE5' }}>
+        <section className="py-16 md:py-24 px-4 md:px-8" style={{ background: 'var(--warm-cream)' }}>
           <div className="max-w-5xl mx-auto">
             <div className="text-center mb-10 md:mb-14">
               <motion.h2
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                className="font-names text-4xl md:text-5xl lg:text-6xl mb-3"
-                style={{ color: '#3D3D3D' }}
+                className="font-script text-4xl md:text-5xl lg:text-6xl mb-3"
+                style={{ color: 'var(--charcoal)' }}
               >
                 Explore
               </motion.h2>
@@ -201,7 +210,7 @@ export default function Home() {
                 viewport={{ once: true }}
                 transition={{ delay: 0.05 }}
                 className="text-base md:text-lg"
-                style={{ color: '#6B6B6B', fontFamily: "'Source Code Pro', monospace" }}
+                style={{ color: 'var(--warm-gray)' }}
               >
                 There&apos;s a whole celebration to plan for — here&apos;s everything you&apos;ll want to know.
               </motion.p>
@@ -224,18 +233,18 @@ export default function Home() {
                     <span
                       className="w-12 h-12 md:w-14 md:h-14 rounded-full flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-105"
                       style={{
-                        background: 'rgba(196, 164, 132, 0.15)',
-                        border: '1px solid rgba(196, 164, 132, 0.3)',
+                        background: 'rgba(201, 184, 150, 0.18)',
+                        border: '1px solid rgba(201, 184, 150, 0.4)',
                       }}
                     >
-                      <page.icon className="w-6 h-6 md:w-7 md:h-7" style={{ color: '#C4A484' }} />
+                      <page.icon className="w-6 h-6 md:w-7 md:h-7" style={{ color: 'var(--champagne)' }} />
                     </span>
-                    <h3 className="font-names text-2xl md:text-3xl mb-1" style={{ color: '#3D3D3D' }}>
+                    <h3 className="font-script text-2xl md:text-3xl mb-1" style={{ color: 'var(--charcoal)' }}>
                       {page.label}
                     </h3>
                     <p
                       className="text-xs md:text-sm leading-relaxed"
-                      style={{ color: '#6B6B6B', fontFamily: "'Source Code Pro', monospace" }}
+                      style={{ color: 'var(--warm-gray)' }}
                     >
                       {page.teaser}
                     </p>
@@ -272,8 +281,8 @@ export default function Home() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="font-names text-3xl sm:text-5xl md:text-6xl mb-2"
-              style={{ color: '#3D3D3D', textShadow: '0 2px 8px rgba(255,255,255,0.8)' }}
+              className="font-script text-3xl sm:text-5xl md:text-6xl mb-2"
+              style={{ color: 'var(--charcoal)', textShadow: '0 2px 8px rgba(255,255,255,0.8)' }}
             >
               Two State Wedding
             </motion.h2>
@@ -286,8 +295,8 @@ export default function Home() {
               transition={{ delay: 0.2 }}
               className="flex items-center justify-center gap-2 mt-2"
             >
-              <Heart className="w-5 h-5" style={{ color: '#3D3D3D', filter: 'drop-shadow(0 2px 4px rgba(255,255,255,0.6))' }} />
-              <Heart className="w-4 h-4" style={{ color: '#3D3D3D', filter: 'drop-shadow(0 2px 4px rgba(255,255,255,0.6))' }} />
+              <Heart className="w-5 h-5" style={{ color: 'var(--charcoal)', filter: 'drop-shadow(0 2px 4px rgba(255,255,255,0.6))' }} />
+              <Heart className="w-4 h-4" style={{ color: 'var(--charcoal)', filter: 'drop-shadow(0 2px 4px rgba(255,255,255,0.6))' }} />
             </motion.div>
           </div>
 
@@ -312,14 +321,14 @@ export default function Home() {
                     />
                   </div>
                   <h3
-                    className="font-names text-2xl md:text-3xl mb-2"
-                    style={{ color: '#3D3D3D', textShadow: '0 2px 8px rgba(255,255,255,0.8)' }}
+                    className="font-script text-2xl md:text-3xl mb-2"
+                    style={{ color: 'var(--charcoal)', textShadow: '0 2px 8px rgba(255,255,255,0.8)' }}
                   >
                     Kolkata
                   </h3>
                   <p
                     className="text-sm md:text-base leading-relaxed font-medium"
-                    style={{ color: '#3D3D3D', fontFamily: "'Source Code Pro', monospace", textShadow: '0 2px 6px rgba(255,255,255,0.9)' }}
+                    style={{ color: 'var(--charcoal)', textShadow: '0 2px 6px rgba(255,255,255,0.9)' }}
                   >
                     ancient architecture, kaali-peeli taxis, sweets after every meal
                   </p>
@@ -337,14 +346,14 @@ export default function Home() {
                     />
                   </div>
                   <h3
-                    className="font-names text-2xl md:text-3xl mb-2"
-                    style={{ color: '#3D3D3D', textShadow: '0 2px 8px rgba(255,255,255,0.8)' }}
+                    className="font-script text-2xl md:text-3xl mb-2"
+                    style={{ color: 'var(--charcoal)', textShadow: '0 2px 8px rgba(255,255,255,0.8)' }}
                   >
                     Bangalore
                   </h3>
                   <p
                     className="text-sm md:text-base leading-relaxed font-medium"
-                    style={{ color: '#3D3D3D', fontFamily: "'Source Code Pro', monospace", textShadow: '0 2px 6px rgba(255,255,255,0.9)' }}
+                    style={{ color: 'var(--charcoal)', textShadow: '0 2px 6px rgba(255,255,255,0.9)' }}
                   >
                     tech hub, weekday dosas, a new bar to try every weekend
                   </p>
