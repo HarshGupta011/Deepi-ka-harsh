@@ -10,7 +10,7 @@ const faqItems = [
   {
     question: 'When is the RSVP deadline?',
     answer:
-      'Please RSVP by August 15th, 2026, so we can finalize our guest count, seating, and stay allocations. You can RSVP through the RSVP page on our website.',
+      'Please RSVP by August 30th, 2026, so we can finalize our guest count, seating, and stay allocations. You can RSVP through the RSVP page on our website.',
   },
   {
     question: 'What is the dress code?',
@@ -31,21 +31,6 @@ const faqItems = [
     question: 'What will the weather be like?',
     answer:
       'December is one of the best months to visit both cities.\n\nBangalore: pleasantly cool and dry — highs around 28°C / 82°F and lows around 15–17°C / 59–63°F. Mornings and evenings can feel chilly; a light jacket or shawl is handy.\n\nKolkata: mildly cool and dry — highs around 25–27°C / 77–80°F and lows around 11–16°C / 53–60°F. Comfortable during the day, breezy at night.\n\nRain is unlikely in both cities during the wedding week.',
-  },
-  {
-    question: 'Can I take photos during the ceremony?',
-    answer:
-      'Yes, of course! Feel free to take photos throughout. Tag us on Instagram and use our hashtags so we can repost — #DeepiKaHarsh and #DeepikaWedsHarsh.',
-  },
-  {
-    question: 'I have dietary restrictions. What should I do?',
-    answer:
-      'Please note: during the wedding events, only vegetarian food will be served — but expect plenty of variety at every event so there’s something for everyone.\n\nPlease note any specific restrictions or allergies on your RSVP and we’ll make sure suitable options are available for you.',
-  },
-  {
-    question: 'Where can I find your gift registry?',
-    answer:
-      'Your presence at our wedding is the greatest gift. If you’d still like to honour us with something, please visit our Registry page for the details.',
   },
   {
     question: 'What if I need to update my RSVP?',
