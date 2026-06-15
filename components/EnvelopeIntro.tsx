@@ -209,7 +209,7 @@ export default function EnvelopeIntro({ onOpen, videoSrc = '/assets/intro-video.
               className="absolute bottom-[15%] sm:bottom-[18%] left-0 right-0 text-center z-10 px-4"
             >
               <p
-                className="font-names text-5xl sm:text-6xl md:text-8xl"
+                className="font-script text-3xl sm:text-4xl md:text-6xl"
                 style={{
                   color: '#3D3D3D',
                 }}
