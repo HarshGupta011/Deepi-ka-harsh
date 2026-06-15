@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import type { ReactNode } from 'react';
 import SectionHeader from '@/components/SectionHeader';
 import ElegantDivider from '@/components/ElegantDivider';
 import {
@@ -11,11 +12,37 @@ import {
   Utensils,
   ShieldCheck,
   Droplet,
-  Syringe,
   Bug,
   ExternalLink,
   FileCheck,
 } from 'lucide-react';
+
+const kolkataHotels = [
+  {
+    name: 'Stadel (at the venue)',
+    description:
+      'On-site rooms - available from 10:00 AM December 12th to 9:00 AM December 14th. They’re limited - RSVP early so we can hold one for you.',
+    distance: 'At the venue · on us',
+    price: '',
+    url: 'https://maps.google.com/?q=Stadel+Salt+Lake+Stadium+Kolkata',
+  },
+  {
+    name: 'JW Marriott Kolkata',
+    description:
+      'Polished five-star comfort in the heart of the city.',
+    distance: 'Close to venue',
+    price: '$$$',
+    url: 'https://www.marriott.com/en-us/hotels/ccujw-jw-marriott-hotel-kolkata/overview/',
+  },
+  {
+    name: 'ITC Royal Bengal',
+    description:
+      'Grand luxury and classic Kolkata hospitality',
+    distance: 'Close to venue',
+    price: '$$$',
+    url: 'https://www.itchotels.com/in/en/itcroyalbengal-kolkata',
+  },
+];
 
 const bangaloreHotels = [
   {
@@ -36,21 +63,85 @@ const bangaloreHotels = [
   },
 ];
 
+function StayBlock({
+  title,
+  note,
+  hotels,
+}: {
+  title: string;
+  note?: ReactNode;
+  hotels: typeof bangaloreHotels;
+}) {
+  return (
+    <div className="max-w-4xl mx-auto mb-12 last:mb-0">
+      <h3
+        className="font-serif text-xl md:text-2xl mb-3 text-center"
+        style={{ color: '#3D3D3D' }}
+      >
+        {title}
+      </h3>
+      {note && (
+        <p
+          className="text-center text-sm md:text-base mb-6 max-w-2xl mx-auto"
+          style={{ color: '#6B6B6B' }}
+        >
+          {note}
+        </p>
+      )}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+        {hotels.map((hotel, index) => (
+          <motion.a
+            key={hotel.name}
+            href={hotel.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: index * 0.1 }}
+            whileHover={{ y: -4 }}
+            className="group block rounded-xl p-6 card-elegant"
+          >
+            <div className="flex items-start justify-between mb-3">
+              <div className="flex items-center gap-3">
+                <Hotel className="w-5 h-5" style={{ color: '#7BA3B5' }} />
+                <h4 className="font-serif text-lg" style={{ color: '#3D3D3D' }}>
+                  {hotel.name}
+                </h4>
+              </div>
+              <ExternalLink
+                className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
+                style={{ color: '#7BA3B5' }}
+              />
+            </div>
+            <p className="text-sm mb-3" style={{ color: '#6B6B6B' }}>
+              {hotel.description}
+            </p>
+            <div className="flex items-center gap-4 text-sm">
+              <span style={{ color: '#3D3D3D' }}>{hotel.distance}</span>
+              {hotel.price && (
+                <span className="font-medium" style={{ color: '#9CAF88' }}>
+                  {hotel.price}
+                </span>
+              )}
+            </div>
+          </motion.a>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 const indiaTips = [
   {
     title: 'Street food',
-    body: 'Be cautious early in your trip. Stick to busy, well-known spots and pace yourself before going adventurous.',
+    body: 'Be cautious early in your trip. Stick to busy, well-known spots and pace yourself before going adventurous. We know it looks yummy!',
     icon: Utensils,
   },
   {
-    title: 'Drink bottled or mineral water only',
-    body: 'Avoid tap water and ice from unverified sources. Sealed bottles are widely available everywhere.',
+    title: 'Prefer bottled or mineral water',
+    body: 'Avoid tap water. Sealed bottles are widely available everywhere.',
     icon: Droplet,
-  },
-  {
-    title: 'Vaccinations',
-    body: 'Check with your doctor 4–6 weeks before travel. Typhoid and hepatitis A are commonly recommended.',
-    icon: Syringe,
   },
   {
     title: 'Mosquito repellent',
@@ -277,89 +368,14 @@ export default function TravelPage() {
               Where to Stay
             </h2>
             <p style={{ color: '#6B6B6B' }}>
-              On-site rooms in Kolkata and a few hand-picked options in Bangalore.
+              On-site rooms and a few hand-picked options.
             </p>
             <ElegantDivider variant="simple" className="mt-6 max-w-xs mx-auto" />
           </div>
 
-          {/* Kolkata - Stadel featured card */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="max-w-3xl mx-auto rounded-2xl p-8 md:p-10 card-elegant mb-12"
-          >
-            <div className="flex items-center gap-3 mb-4">
-              <Hotel className="w-5 h-5" style={{ color: '#9CAF88' }} />
-              <h3 className="font-serif text-2xl" style={{ color: '#3D3D3D' }}>
-                Kolkata — at the venue (Stadel)
-              </h3>
-            </div>
-            <p className="leading-relaxed mb-4" style={{ color: '#3D3D3D' }}>
-              For our Kolkata weekend, a limited block of rooms is available on-site at{' '}
-              <strong>Stadel</strong> from the <strong>evening of December 12th</strong> to
-              the <strong>early morning of December 14th</strong>.
-            </p>
-            <p className="leading-relaxed" style={{ color: '#6B6B6B' }}>
-              Allocation is based on the order of RSVPs — please confirm yours as early
-              as possible so we can hold a room for you. If on-site stay fills up, we&apos;ll
-              share a list of nearby hotels and help with transport to the venue.
-            </p>
-          </motion.div>
+          <StayBlock title="Kolkata" hotels={kolkataHotels} />
 
-          {/* Bangalore hotels */}
-          <div className="max-w-4xl mx-auto">
-            <h3
-              className="font-serif text-xl md:text-2xl mb-3 text-center"
-              style={{ color: '#3D3D3D' }}
-            >
-              Bangalore — nearby hotels
-            </h3>
-            <p
-              className="text-center text-sm md:text-base mb-6 max-w-2xl mx-auto"
-              style={{ color: '#6B6B6B' }}
-            >
-              Please <strong style={{ color: '#9CAF88' }}>confirm with us before booking any hotels</strong> — we may have updates or recommendations to share.
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
-              {bangaloreHotels.map((hotel, index) => (
-                <motion.a
-                  key={hotel.name}
-                  href={hotel.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.1 }}
-                  whileHover={{ y: -4 }}
-                  className="group block rounded-xl p-6 card-elegant"
-                >
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="flex items-center gap-3">
-                      <Hotel className="w-5 h-5" style={{ color: '#7BA3B5' }} />
-                      <h4 className="font-serif text-lg" style={{ color: '#3D3D3D' }}>
-                        {hotel.name}
-                      </h4>
-                    </div>
-                    <ExternalLink
-                      className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity"
-                      style={{ color: '#7BA3B5' }}
-                    />
-                  </div>
-                  <p className="text-sm mb-3" style={{ color: '#6B6B6B' }}>
-                    {hotel.description}
-                  </p>
-                  <div className="flex items-center gap-4 text-sm">
-                    <span style={{ color: '#3D3D3D' }}>{hotel.distance}</span>
-                    <span className="font-medium" style={{ color: '#9CAF88' }}>
-                      {hotel.price}
-                    </span>
-                  </div>
-                </motion.a>
-              ))}
-            </div>
-          </div>
+          <StayBlock title="Bangalore" hotels={bangaloreHotels} />
 
         </div>
       </section>
@@ -478,7 +494,7 @@ export default function TravelPage() {
               Visa for India
             </h2>
             <p style={{ color: '#6B6B6B' }}>
-              Most international guests need a visa. The online{' '}
+              International guests may need a visa. The online{' '}
               <a
                 href="https://indianvisaonline.gov.in/evisa/tvoa.html"
                 target="_blank"
