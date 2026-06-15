@@ -93,7 +93,7 @@ export default function PhotoGallery({ photos }: PhotoGalleryProps) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center"
+            className="fixed inset-0 z-[60] flex items-center justify-center"
             style={{
               background: 'rgba(250, 248, 245, 0.98)',
             }}
@@ -123,20 +123,6 @@ export default function PhotoGallery({ photos }: PhotoGalleryProps) {
               </svg>
             </div>
 
-            {/* Close Button */}
-            <button
-              onClick={closeLightbox}
-              className="absolute top-4 right-4 p-3 rounded-full transition-all duration-300 z-20"
-              style={{
-                background: 'rgba(123, 163, 181, 0.1)',
-                border: '1px solid rgba(123, 163, 181, 0.3)',
-                color: '#7BA3B5',
-              }}
-              aria-label="Close"
-            >
-              <X className="w-6 h-6" />
-            </button>
-
             {/* Previous Button */}
             <button
               onClick={(e) => {
@@ -163,6 +149,24 @@ export default function PhotoGallery({ photos }: PhotoGalleryProps) {
               className="relative max-w-[90vw] max-h-[90vh] rounded-xl overflow-hidden shadow-soft-lg"
               onClick={(e) => e.stopPropagation()}
             >
+              {/* Close Button - pinned to the image's top-right corner */}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  closeLightbox();
+                }}
+                className="absolute top-2 right-2 md:top-3 md:right-3 p-2 rounded-full transition-all duration-300 z-20 shadow-md hover:scale-105"
+                style={{
+                  background: 'rgba(255, 255, 255, 0.9)',
+                  border: '1px solid rgba(123, 163, 181, 0.4)',
+                  color: '#3D3D3D',
+                  backdropFilter: 'blur(4px)',
+                }}
+                aria-label="Close"
+              >
+                <X className="w-5 h-5" />
+              </button>
+
               <Image
                 src={photos[selectedIndex].src}
                 alt={photos[selectedIndex].alt}

@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import SectionHeader from '@/components/SectionHeader';
 import PhotoGallery from '@/components/PhotoGallery';
 import ElegantDivider from '@/components/ElegantDivider';
-import { Camera, Heart } from 'lucide-react';
+import { Camera, Heart, Upload } from 'lucide-react';
 
 const photos = [
   { src: '/images/gallery/IMG_2654_Original.jpg', alt: 'Memory 1' },
@@ -97,9 +97,25 @@ export default function GalleryPage() {
               className="inline-block px-6 py-3 rounded-xl card-elegant"
             >
               <span className="font-script text-xl md:text-2xl" style={{ color: '#7BA3B5' }}>
-                #DeepiAndHarsh2025
+                #Deepi-ka-harsh
               </span>
             </motion.div>
+
+            {/* Shared Google Drive upload link */}
+            <p className="text-base mt-6 mb-3" style={{ color: '#6B6B6B' }}>
+              Or drop your pictures straight into our shared Drive folder so we can all keep adding to the album.
+            </p>
+            <motion.a
+              href="https://drive.google.com/drive/folders/REPLACE_WITH_FOLDER_ID"
+              target="_blank"
+              rel="noopener noreferrer"
+              whileHover={{ scale: 1.02 }}
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-white tracking-wide transition-all duration-300 hover:opacity-90"
+              style={{ background: '#9CAF88' }}
+            >
+              <Upload className="w-5 h-5" />
+              Upload to our Drive
+            </motion.a>
           </motion.div>
         </div>
       </section>
