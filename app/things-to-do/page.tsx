@@ -15,6 +15,9 @@ import {
   Flower2,
   Wine,
   Sparkles,
+  BookOpen,
+  Building2,
+  Waves,
 } from 'lucide-react';
 
 const bangaloreThingsToDo = [
@@ -80,9 +83,57 @@ const bangaloreThingsToDo = [
 
 const kolkataThingsToDo = [
   {
+    name: 'Victoria Memorial',
+    description:
+      'The white-marble crown jewel of the city, wrapped in gardens. Peak colonial-era grandeur.',
+    icon: Landmark,
+  },
+  {
+    name: 'National Library of India',
+    description:
+      'The country’s largest library, set in the leafy colonial Belvedere Estate — a century-plus of books and quiet grandeur.',
+    icon: BookOpen,
+  },
+  {
+    name: 'Howrah Bridge & Princep Ghat',
+    description:
+      'Walk the iconic cantilever bridge, then catch a Hooghly-river sunset from the ghats.',
+    icon: Waves,
+  },
+  {
+    name: 'Indian Museum',
+    description:
+      'The oldest and largest museum in India — Egyptian mummies to Mughal miniatures under one colonial roof.',
+    icon: Building2,
+  },
+  {
+    name: 'Park Street',
+    description:
+      'Kolkata’s nightlife spine. Chelo kebab at Peter Cat, breakfast and rum balls at Flury’s.',
+    icon: Wine,
+  },
+  {
     name: 'Phuchka',
     description:
       'Kolkata’s street-snack pride — crispy puris with spiced tamarind water. Eat them where the locals do.',
+    icon: Utensils,
+  },
+  {
+    name: 'Kathi Rolls',
+    description:
+      'The original Kolkata roll — egg, kebab, paratha. Nizam’s started it; everyone perfected it.',
+    icon: Utensils,
+  },
+  {
+    name: 'Kolkata Biryani',
+    description:
+      'Fragrant, subtle, and famously hiding a whole potato. Try Arsalan or Aminia.',
+    icon: Utensils,
+  },
+  {
+    name: 'Tiretti Bazaar',
+    description:
+      'Dawn breakfast in Kolkata’s old Chinatown — momos, pork buns, and hand-pulled noodles.',
     icon: Utensils,
   },
   {

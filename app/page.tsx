@@ -2,12 +2,22 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Heart } from 'lucide-react';
+import { Heart, CalendarDays, Plane, Compass, Camera, HelpCircle, ChevronDown } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import EnvelopeIntro from '@/components/EnvelopeIntro';
 import ElegantDivider from '@/components/ElegantDivider';
 import HeroSlideshow from '@/components/HeroSlideshow';
+import Countdown from '@/components/Countdown';
+
+const explorePages = [
+  { href: '/our-story', label: 'Our Story', teaser: 'How two Bangalore kids ended up here', icon: Heart },
+  { href: '/events', label: 'Events', teaser: 'Five days, two cities, one big party', icon: CalendarDays },
+  { href: '/travel', label: 'Travel & Stay', teaser: 'Getting here, where to stay, India tips', icon: Plane },
+  { href: '/things-to-do', label: 'Things to Do', teaser: 'Our favourite eats and sights in both cities', icon: Compass },
+  { href: '/gallery', label: 'Gallery', teaser: 'A few of our favourite moments', icon: Camera },
+  { href: '/faq', label: 'FAQs', teaser: 'Dress code, plus-ones, and the small print', icon: HelpCircle },
+];
 
 export default function Home() {
   const [isOpen, setIsOpen] = useState(false);
@@ -73,6 +83,22 @@ export default function Home() {
               December 13, 2026 | Kolkata
             </motion.p>
           </div>
+
+          {/* Scroll cue */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: isOpen ? 1 : 0 }}
+            transition={{ delay: 1.2, duration: 0.6 }}
+            className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10"
+            aria-hidden="true"
+          >
+            <motion.div
+              animate={{ y: [0, 8, 0] }}
+              transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
+            >
+              <ChevronDown className="w-7 h-7 text-white" style={{ filter: 'drop-shadow(0 1px 4px rgba(0,0,0,0.4))' }} />
+            </motion.div>
+          </motion.div>
         </section>
 
         {/* We're Getting Married Section */}
@@ -142,6 +168,81 @@ export default function Home() {
                 RSVP
               </Link>
             </motion.div>
+
+            {/* Countdown */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.3 }}
+              className="mt-14"
+            >
+              <Countdown targetDate="2026-12-13T18:00:00" />
+            </motion.div>
+          </div>
+        </section>
+
+        {/* Explore Section */}
+        <section className="py-16 md:py-24 px-4 md:px-8" style={{ background: '#F5EDE5' }}>
+          <div className="max-w-5xl mx-auto">
+            <div className="text-center mb-10 md:mb-14">
+              <motion.h2
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="font-names text-4xl md:text-5xl lg:text-6xl mb-3"
+                style={{ color: '#3D3D3D' }}
+              >
+                Explore
+              </motion.h2>
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.05 }}
+                className="text-base md:text-lg"
+                style={{ color: '#6B6B6B', fontFamily: "'Source Code Pro', monospace" }}
+              >
+                There&apos;s a whole celebration to plan for — here&apos;s everything you&apos;ll want to know.
+              </motion.p>
+              <ElegantDivider variant="line" className="mt-6 max-w-xs mx-auto" />
+            </div>
+
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+              {explorePages.map((page, index) => (
+                <motion.div
+                  key={page.href}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.05 }}
+                >
+                  <Link
+                    href={page.href}
+                    className="group flex flex-col items-center text-center p-5 md:p-7 rounded-2xl card-elegant h-full transition-transform duration-300 hover:-translate-y-1"
+                  >
+                    <span
+                      className="w-12 h-12 md:w-14 md:h-14 rounded-full flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-105"
+                      style={{
+                        background: 'rgba(196, 164, 132, 0.15)',
+                        border: '1px solid rgba(196, 164, 132, 0.3)',
+                      }}
+                    >
+                      <page.icon className="w-6 h-6 md:w-7 md:h-7" style={{ color: '#C4A484' }} />
+                    </span>
+                    <h3 className="font-names text-2xl md:text-3xl mb-1" style={{ color: '#3D3D3D' }}>
+                      {page.label}
+                    </h3>
+                    <p
+                      className="text-xs md:text-sm leading-relaxed"
+                      style={{ color: '#6B6B6B', fontFamily: "'Source Code Pro', monospace" }}
+                    >
+                      {page.teaser}
+                    </p>
+                  </Link>
+                </motion.div>
+              ))}
+            </div>
           </div>
         </section>
 
