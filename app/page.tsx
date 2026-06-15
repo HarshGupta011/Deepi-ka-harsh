@@ -70,7 +70,7 @@ export default function Home() {
                 textShadow: '0 1px 5px rgba(0,0,0,0.3)',
               }}
             >
-              December 12, 2026 | Kolkata
+              December 13, 2026 | Kolkata
             </motion.p>
           </div>
         </section>
