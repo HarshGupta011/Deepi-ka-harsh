@@ -10,7 +10,7 @@ const faqItems = [
   {
     question: 'When is the RSVP deadline?',
     answer:
-      'Please RSVP by August 30th, 2026, so we can finalize our guest count, seating, and stay allocations. You can RSVP through the RSVP page on our website.',
+      'Please RSVP by September 30th, 2026, so we can finalize our guest count, seating, and stay allocations. You can RSVP through the RSVP page on our website.',
   },
   {
     question: 'What is the dress code?',

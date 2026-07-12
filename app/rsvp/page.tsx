@@ -124,7 +124,7 @@ export default function RSVPPage() {
                   Kindly Respond
                 </h2>
                 <p style={{ color: '#6B6B6B' }}>
-                  Please RSVP by August 30, 2026
+                  Please RSVP by September 30, 2026
                 </p>
                 <ElegantDivider variant="simple" className="mt-4 max-w-xs mx-auto" />
               </div>
