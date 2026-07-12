@@ -142,13 +142,19 @@ const kolkataThingsToDo = [
   {
     name: 'Bengali Sweets',
     description:
-      'Rosogolla, mishti doi, sandesh. Visit K.C. Das or Balaram Mullick & Radharaman Mullick.',
+      'Rosogolla, mishti doi, sandesh. Visit Gupta Brothers or Balaram Mullick & Radharaman Mullick.',
     icon: Cookie,
   },
   {
     name: 'Aloo Puri',
     description:
-      'Classic Bengali breakfast — fluffy pooris with spiced potato curry. Try Tewari Brothers.',
+      'Classic Bengali breakfast — fluffy pooris with spiced potato curry. Try Sharma Dhaba.',
+    icon: Utensils,
+  },
+  {
+    name: 'Balwant Singh',
+    description:
+      'The classic Kolkata late-night spot — open 24/7 for whatever you need, whenever you need it.',
     icon: Utensils,
   },
 ];
