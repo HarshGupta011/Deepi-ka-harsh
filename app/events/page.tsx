@@ -96,7 +96,7 @@ const events: EventType[] = [
     id: 3,
     name: 'Jashn-e-Mehendi',
     date: 'December 12th',
-    time: '10:30 AM – 6:30 PM onwards',
+    time: '10:30 AM onwards',
     timeNote: 'Come early — the earlier, the better!',
     schedule: [
       { label: 'Mehendi', time: '10:30 AM onwards', emphasize: true },
