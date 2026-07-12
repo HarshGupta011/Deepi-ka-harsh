@@ -158,7 +158,7 @@ export default function Home() {
               transition={{ delay: 0.3 }}
               className="mt-14"
             >
-              <Countdown targetDate="2026-12-13T18:00:00" />
+              <Countdown targetDate="2026-12-13T18:00:00+05:30" />
             </motion.div>
           </div>
         </section>
