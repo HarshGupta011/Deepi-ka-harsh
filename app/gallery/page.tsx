@@ -101,12 +101,12 @@ export default function GalleryPage() {
               </span>
             </motion.div>
 
-            {/* Shared Google Drive upload link */}
+            {/* Shared Google Photos upload link */}
             <p className="text-base mt-6 mb-3" style={{ color: '#6B6B6B' }}>
-              Or drop your pictures straight into our shared Drive folder so we can all keep adding to the album.
+              Or drop your pictures straight into our shared Photos album so we can all keep adding to it.
             </p>
             <motion.a
-              href="https://drive.google.com/drive/folders/REPLACE_WITH_FOLDER_ID"
+              href="https://photos.app.goo.gl/UGJp221zySRkyNVE9"
               target="_blank"
               rel="noopener noreferrer"
               whileHover={{ scale: 1.02 }}
@@ -114,7 +114,7 @@ export default function GalleryPage() {
               style={{ background: '#9CAF88' }}
             >
               <Upload className="w-5 h-5" />
-              Upload to our Drive
+              Upload photos here
             </motion.a>
           </motion.div>
         </div>
