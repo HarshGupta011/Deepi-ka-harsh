@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Heart, CalendarDays, Plane, Compass, Camera, HelpCircle } from 'lucide-react';
+import { Heart, CalendarDays, Plane, Compass, Camera, HelpCircle, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import EnvelopeIntro from '@/components/EnvelopeIntro';
@@ -187,6 +187,16 @@ export default function Home() {
                 There&apos;s a whole celebration to plan for — here&apos;s everything you&apos;ll want to know.
               </motion.p>
               <ElegantDivider variant="line" className="mt-6 max-w-xs mx-auto" />
+              <motion.p
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.1 }}
+                className="text-sm mt-4"
+                style={{ color: '#9B9B9B', fontFamily: "'Source Code Pro', monospace" }}
+              >
+                Tap on a card below to start exploring.
+              </motion.p>
             </div>
 
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
@@ -200,8 +210,12 @@ export default function Home() {
                 >
                   <Link
                     href={page.href}
-                    className="group flex flex-col items-center text-center p-5 md:p-7 rounded-2xl card-elegant h-full transition-transform duration-300 hover:-translate-y-1"
+                    className="group relative flex flex-col items-center text-center p-5 md:p-7 rounded-2xl card-elegant h-full transition-transform duration-300 hover:-translate-y-1"
                   >
+                    <ArrowRight
+                      className="absolute top-3 right-3 w-4 h-4 opacity-30 transition-all duration-300 group-hover:opacity-80 group-hover:translate-x-0.5"
+                      style={{ color: '#C9B896' }}
+                    />
                     <span
                       className="w-12 h-12 md:w-14 md:h-14 rounded-full flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-105"
                       style={{
