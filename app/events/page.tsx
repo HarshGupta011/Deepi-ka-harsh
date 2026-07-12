@@ -12,6 +12,7 @@ interface EventType {
   date: string;
   time: string;
   timeNote?: string;
+  schedule?: { label: string; time?: string; emphasize?: boolean; note?: string }[];
   ageRestriction?: string;
   venueType?: 'Indoor' | 'Outdoor' | 'Indoor & Outdoor';
   location: string;
@@ -31,6 +32,7 @@ interface EventType {
   outfitInspoLinks?: { label: string; url: string }[];
   description: string;
   image: string;
+  imagePosition?: string;
   color: string;
   calendarEvent: {
     title: string;
@@ -46,8 +48,8 @@ const events: EventType[] = [
     id: 1,
     name: 'The Prequel',
     date: 'December 5th',
-    time: '9:00 PM - 12:00 AM',
-    timeNote: 'Arrival: 8:30 - 9 PM. Account for Bangalore traffic & arrive on time!',
+    time: '8:00 PM - 11:00 PM',
+    timeNote: 'Arrival: 7:30 - 8 PM. Account for Bangalore traffic & arrive on time!',
     ageRestriction: '21+ only',
     venueType: 'Indoor',
     location: 'Gatsby, Bangalore',
@@ -61,15 +63,15 @@ const events: EventType[] = [
     color: '#7BA3B5',
     calendarEvent: {
       title: 'Deepika & Harsh - The Prequel (Cocktail)',
-      description: 'Cocktail celebration for Deepika & Harsh wedding. Arrival window: 8:30-9PM. Doors close after 9PM.',
+      description: 'Cocktail celebration for Deepika & Harsh wedding. Arrival window: 7:30-8PM. Doors close after 8PM.',
       location: 'Gatsby, Survey No.2&3, Bannerghatta Rd, Arekere, Bengaluru, Karnataka 560076',
-      startDate: '2025-12-05T20:30:00',
-      endDate: '2025-12-05T23:59:00',
+      startDate: '2025-12-05T19:30:00',
+      endDate: '2025-12-05T23:00:00',
     },
   },
   {
     id: 2,
-    name: 'The Reception',
+    name: 'Pre Wedding Dinner',
     date: 'December 6th',
     time: '7:00 PM onwards',
     venueType: 'Outdoor',
@@ -77,13 +79,14 @@ const events: EventType[] = [
     address: 'South End Circle, Jayanagar, Bengaluru',
     mapUrl: 'https://maps.google.com/?q=La+Marvella+South+End+Circle+Jayanagar+Bengaluru',
     dressCode: 'Indian Formal / Reception Glam ✨',
-    dressCodeNote: 'Think elegant sarees, statement lehengas, bandhgalas & refined evening looks',
+    dressCodeNote: 'Think elegant sarees, statement lehengas, indo western outfits, bandhgalas & refined evening looks',
     description: 'An elegant evening of dinner, dancing, and celebrating our new journey together.',
-    image: '/images/events/reception_main.png',
+    image: '/images/events/pre_wedding_dinner.png',
+    imagePosition: 'top',
     color: '#C9A86C',
     calendarEvent: {
-      title: 'Deepika & Harsh - Reception',
-      description: 'Wedding reception for Deepika & Harsh',
+      title: 'Deepika & Harsh - Pre Wedding Dinner',
+      description: 'Pre wedding dinner for Deepika & Harsh',
       location: 'La Marvella, #1 South End Circle, 14th Cross Road, Jayanagar, Bengaluru, Karnataka 560011',
       startDate: '2025-12-06T19:00:00',
       endDate: '2025-12-06T23:59:00',
@@ -93,8 +96,13 @@ const events: EventType[] = [
     id: 3,
     name: 'Jashn-e-Mehendi',
     date: 'December 12th',
-    time: "Groom's side 10 AM–2 PM · Bride's side 2 PM onwards",
+    time: '10:30 AM – 6:30 PM onwards',
     timeNote: 'Come early — the earlier, the better!',
+    schedule: [
+      { label: 'Mehendi', time: '10:30 AM onwards', emphasize: true },
+      { label: 'Ring Ceremony', time: '6:00 PM onwards', note: 'Outfit: your choice' },
+      { label: 'Mayra', time: '6:30 PM onwards' },
+    ],
     venueType: 'Indoor',
     location: 'Stadel, Kolkata',
     address: 'Salt Lake Stadium Metro Station, Kolkata',
@@ -145,16 +153,25 @@ const events: EventType[] = [
   },
   {
     id: 5,
-    name: 'Wedding',
+    name: 'Vivaha Utsavam',
     date: 'December 13th',
-    time: '6:00 PM onwards',
+    time: '4:30 PM – 1:00 AM (14th Dec)',
+    schedule: [
+      { label: 'Baraat', time: '4:30 PM onwards', emphasize: true },
+      { label: 'Varmala' },
+      { label: 'Dinner' },
+      { label: 'Pheras' },
+      { label: 'Vidai', time: 'By 1:00 AM, 14th Dec', emphasize: true },
+    ],
     venueType: 'Indoor & Outdoor',
-    location: 'Venue TBD',
-    address: 'Kolkata, India',
-    dressCode: 'Formal Indian Attire',
+    location: 'Stadel, Kolkata',
+    address: 'Salt Lake Stadium Metro Station, Kolkata',
+    mapUrl: 'https://maps.google.com/?q=Stadel+Salt+Lake+Stadium+Kolkata',
+    dressCode: 'Lehengas & Indo-Western',
+    dressCodeNote: 'Think North Indian wedding attires',
     description: 'The moment we say "I do" - surrounded by family, friends, and endless love.',
-    image: '/images/first-meeting.png',
-    color: '#E8D5D3',
+    image: '/images/events/wedding_main.png',
+    color: '#A85C6E',
     calendarEvent: {
       title: 'Deepika & Harsh - Wedding',
       description: 'Wedding ceremony for Deepika & Harsh',
@@ -212,6 +229,7 @@ function EventCard({ event, index }: { event: EventType; index: number }) {
               alt={event.name}
               fill
               className="object-cover"
+              style={event.imagePosition ? { objectPosition: event.imagePosition } : undefined}
             />
             {/* Gradient overlay */}
             <div
@@ -287,6 +305,46 @@ function EventCard({ event, index }: { event: EventType; index: number }) {
                   <p className="font-medium text-sm" style={{ color: '#3D3D3D' }}>{event.time}</p>
                   {event.timeNote && (
                     <p className="text-xs mt-0.5 italic" style={{ color: event.color }}>{event.timeNote}</p>
+                  )}
+                  {event.schedule && (
+                    <div className="mt-3 relative pl-4">
+                      <div
+                        className="absolute left-[5px] top-1.5 bottom-1.5 w-px"
+                        style={{ backgroundColor: `${event.color}40` }}
+                      />
+                      <div className="space-y-2.5">
+                        {event.schedule.map((step, i) => (
+                          <div key={i} className="relative">
+                            <div
+                              className={`absolute top-1 rounded-full border-2 ${
+                                step.emphasize ? '-left-[18px] w-3.5 h-3.5' : '-left-4 w-2.5 h-2.5'
+                              }`}
+                              style={{
+                                backgroundColor: step.emphasize ? event.color : '#FFFEF9',
+                                borderColor: event.color,
+                              }}
+                            />
+                            <p
+                              className={step.emphasize ? 'font-semibold text-sm' : 'font-medium text-xs'}
+                              style={{ color: step.emphasize ? event.color : '#3D3D3D' }}
+                            >
+                              {step.label}
+                            </p>
+                            {step.time && (
+                              <p
+                                className={step.emphasize ? 'text-xs font-medium' : 'text-[11px]'}
+                                style={{ color: event.color }}
+                              >
+                                {step.time}
+                              </p>
+                            )}
+                            {step.note && (
+                              <p className="text-[11px] italic" style={{ color: '#9B9B9B' }}>{step.note}</p>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                   )}
                   {event.ageRestriction && (
                     <span

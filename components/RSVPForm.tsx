@@ -106,7 +106,7 @@ const EVENTS = {
     label: 'All Bangalore Events',
     events: [
       { id: 'cocktail', label: 'Cocktail Party' },
-      { id: 'reception', label: 'Reception' },
+      { id: 'reception', label: 'Pre Wedding Dinner' },
     ],
   },
   kolkata: {

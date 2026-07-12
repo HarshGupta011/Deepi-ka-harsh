@@ -48,8 +48,8 @@ const bangaloreHotels = [
   {
     name: 'La Marvella, Jayanagar',
     description:
-      'Our Reception venue — stay where the party is.',
-    distance: 'At the Reception venue',
+      'Our Pre Wedding Dinner venue — stay where the party is.',
+    distance: 'At the Pre Wedding Dinner venue',
     price: '$$',
     url: 'https://www.lamarvellahotels.com/',
   },
