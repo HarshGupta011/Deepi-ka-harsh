@@ -1,6 +1,7 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import SectionHeader from '@/components/SectionHeader';
 import ElegantDivider from '@/components/ElegantDivider';
 import Recommendations from '@/components/Recommendations';
@@ -18,6 +19,8 @@ import {
   BookOpen,
   Building2,
   Waves,
+  ChevronDown,
+  LucideIcon,
 } from 'lucide-react';
 
 const bangaloreThingsToDo = [
@@ -150,6 +153,92 @@ const kolkataThingsToDo = [
   },
 ];
 
+interface ThingToDoItem {
+  name: string;
+  description: string;
+  icon: LucideIcon;
+}
+
+function CityAccordion({
+  city,
+  items,
+  accentBg,
+  accentBorder,
+  accentColor,
+  defaultOpen = false,
+}: {
+  city: string;
+  items: ThingToDoItem[];
+  accentBg: string;
+  accentBorder: string;
+  accentColor: string;
+  defaultOpen?: boolean;
+}) {
+  const [isOpen, setIsOpen] = useState(defaultOpen);
+
+  return (
+    <div className="rounded-2xl card-elegant overflow-hidden">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full flex items-center justify-between gap-3 p-5 md:p-6"
+        aria-expanded={isOpen}
+      >
+        <div className="flex items-center gap-3">
+          <h3 className="font-serif text-xl md:text-2xl" style={{ color: '#3D3D3D' }}>
+            {city}
+          </h3>
+          <span
+            className="text-xs font-medium px-2.5 py-1 rounded-full"
+            style={{ background: accentBg, color: accentColor }}
+          >
+            {items.length} picks
+          </span>
+        </div>
+        <motion.div
+          animate={{ rotate: isOpen ? 180 : 0, y: isOpen ? 0 : [0, 4, 0] }}
+          transition={{
+            rotate: { duration: 0.2 },
+            y: { duration: 1.1, repeat: isOpen ? 0 : Infinity, ease: 'easeInOut' },
+          }}
+        >
+          <ChevronDown className="w-5 h-5" style={{ color: accentColor }} />
+        </motion.div>
+      </button>
+
+      <AnimatePresence initial={false}>
+        {isOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3, ease: 'easeInOut' }}
+            className="overflow-hidden"
+          >
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-5 md:p-6 pt-0">
+              {items.map((item) => (
+                <div key={item.name} className="text-center p-6 rounded-xl" style={{ background: 'rgba(255, 254, 249, 0.6)' }}>
+                  <div
+                    className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4"
+                    style={{ background: accentBg, border: `1px solid ${accentBorder}` }}
+                  >
+                    <item.icon className="w-7 h-7" style={{ color: accentColor }} />
+                  </div>
+                  <h4 className="font-serif text-lg mb-2" style={{ color: '#3D3D3D' }}>
+                    {item.name}
+                  </h4>
+                  <p className="text-sm" style={{ color: '#6B6B6B' }}>
+                    {item.description}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
 export default function ThingsToDoPage() {
   return (
     <>
@@ -213,92 +302,21 @@ export default function ThingsToDoPage() {
             subtitle="If you have the time, explore the cities — here are a few of our favourites to get you started."
           />
 
-          <div className="space-y-14 max-w-5xl mx-auto">
-            {/* Bangalore */}
-            <div>
-              <h3
-                className="font-serif text-xl md:text-2xl mb-6 text-center"
-                style={{ color: '#3D3D3D' }}
-              >
-                Bangalore
-              </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {bangaloreThingsToDo.map((item, index) => (
-                  <motion.div
-                    key={item.name}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: index * 0.05 }}
-                    whileHover={{ y: -4 }}
-                    className="text-center p-6 rounded-xl card-elegant"
-                  >
-                    <motion.div
-                      whileHover={{ scale: 1.05 }}
-                      className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4"
-                      style={{
-                        background: 'rgba(123, 163, 181, 0.15)',
-                        border: '1px solid rgba(123, 163, 181, 0.3)',
-                      }}
-                    >
-                      <item.icon className="w-7 h-7" style={{ color: '#7BA3B5' }} />
-                    </motion.div>
-                    <h4
-                      className="font-serif text-lg mb-2"
-                      style={{ color: '#3D3D3D' }}
-                    >
-                      {item.name}
-                    </h4>
-                    <p className="text-sm" style={{ color: '#6B6B6B' }}>
-                      {item.description}
-                    </p>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-
-            {/* Kolkata */}
-            <div>
-              <h3
-                className="font-serif text-xl md:text-2xl mb-6 text-center"
-                style={{ color: '#3D3D3D' }}
-              >
-                Kolkata
-              </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {kolkataThingsToDo.map((item, index) => (
-                  <motion.div
-                    key={item.name}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: index * 0.05 }}
-                    whileHover={{ y: -4 }}
-                    className="text-center p-6 rounded-xl card-elegant"
-                  >
-                    <motion.div
-                      whileHover={{ scale: 1.05 }}
-                      className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4"
-                      style={{
-                        background: 'rgba(156, 175, 136, 0.15)',
-                        border: '1px solid rgba(156, 175, 136, 0.3)',
-                      }}
-                    >
-                      <item.icon className="w-7 h-7" style={{ color: '#9CAF88' }} />
-                    </motion.div>
-                    <h4
-                      className="font-serif text-lg mb-2"
-                      style={{ color: '#3D3D3D' }}
-                    >
-                      {item.name}
-                    </h4>
-                    <p className="text-sm" style={{ color: '#6B6B6B' }}>
-                      {item.description}
-                    </p>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
+          <div className="space-y-5 max-w-5xl mx-auto">
+            <CityAccordion
+              city="Bangalore"
+              items={bangaloreThingsToDo}
+              accentBg="rgba(123, 163, 181, 0.15)"
+              accentBorder="rgba(123, 163, 181, 0.3)"
+              accentColor="#7BA3B5"
+            />
+            <CityAccordion
+              city="Kolkata"
+              items={kolkataThingsToDo}
+              accentBg="rgba(156, 175, 136, 0.15)"
+              accentBorder="rgba(156, 175, 136, 0.3)"
+              accentColor="#9CAF88"
+            />
           </div>
         </div>
       </section>
