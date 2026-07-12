@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import { Clock, MapPin, Shirt, Sparkles, ExternalLink, Building2 } from 'lucide-react';
+import { Clock, MapPin, Shirt, Sparkles, ExternalLink, Building2, RotateCw } from 'lucide-react';
 import AddToCalendar from '@/components/AddToCalendar';
 
 interface EventType {
@@ -185,6 +185,7 @@ const events: EventType[] = [
 function EventCard({ event, index }: { event: EventType; index: number }) {
   const [isFlipped, setIsFlipped] = useState(false);
   const backRef = useRef<HTMLDivElement>(null);
+  const hasAutoFlippedRef = useRef(false);
 
   useEffect(() => {
     if (isFlipped && backRef.current) {
@@ -196,6 +197,20 @@ function EventCard({ event, index }: { event: EventType; index: number }) {
     setIsFlipped(!isFlipped);
   };
 
+  // Show, don't just tell: the first card auto-flips there-and-back once the
+  // first time it scrolls into view, so guests physically see that cards flip
+  // instead of relying on the "tap for details" hint alone.
+  const handleViewportEnter = () => {
+    if (index !== 0 || hasAutoFlippedRef.current) return;
+    hasAutoFlippedRef.current = true;
+    const flipIn = setTimeout(() => setIsFlipped(true), 900);
+    const flipOut = setTimeout(() => setIsFlipped(false), 2100);
+    return () => {
+      clearTimeout(flipIn);
+      clearTimeout(flipOut);
+    };
+  };
+
   const handleLinkClick = (e: React.MouseEvent) => {
     e.stopPropagation();
   };
@@ -205,6 +220,7 @@ function EventCard({ event, index }: { event: EventType; index: number }) {
       initial={{ opacity: 0, y: 50 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
+      onViewportEnter={handleViewportEnter}
       transition={{ delay: index * 0.1 }}
       className="perspective-1000 w-full"
     >
@@ -239,17 +255,22 @@ function EventCard({ event, index }: { event: EventType; index: number }) {
               }}
             />
             {/* Date bottom left */}
-            <div className="absolute bottom-0 left-0 right-0 p-5 text-white flex justify-between items-end">
+            <div className="absolute bottom-0 left-0 right-0 p-5 text-white flex justify-between items-end gap-2">
               <p
-                className="text-lg font-medium tracking-wide"
+                className="text-base sm:text-lg font-medium tracking-wide whitespace-nowrap"
                 style={{ textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}
               >
                 {event.date}
               </p>
-              <p className="text-xs text-white/70 flex items-center gap-1">
-                <Sparkles className="w-3 h-3" />
+              <motion.p
+                className="flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full text-[11px] sm:text-xs font-semibold text-white whitespace-nowrap flex-shrink-0"
+                style={{ background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(2px)' }}
+                animate={{ scale: [1, 1.08, 1] }}
+                transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
+              >
+                <RotateCw className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                 Tap for details
-              </p>
+              </motion.p>
             </div>
           </div>
         </div>
