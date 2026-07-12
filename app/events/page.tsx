@@ -169,7 +169,7 @@ const events: EventType[] = [
     mapUrl: 'https://maps.google.com/?q=Stadel+Salt+Lake+Stadium+Kolkata',
     dressCode: 'Lehengas & Indo-Western',
     dressCodeNote: 'Think North Indian wedding attires',
-    description: 'The moment we say "I do" - surrounded by family, friends, and endless love.',
+    description: 'Sacred vows around the fire',
     image: '/images/events/wedding_main.png',
     color: '#A85C6E',
     calendarEvent: {
