@@ -34,35 +34,71 @@ function normalizeNameClient(first: string, last: string) {
 }
 
 // JSONP fallback: Apps Script GET reads are flaky cross-origin in some browsers,
-// so if a plain fetch fails we load the response via a <script> + global callback.
+// so we run this in parallel with a plain fetch (see lookupGuest) rather than
+// waiting for the fetch to fail first — a Google Apps Script round trip alone
+// already costs ~2-4s, so running fallback attempts sequentially can leave a
+// guest waiting 5-8s instead of the ~2-4s a single successful attempt takes.
 let jsonpCounter = 0;
-function lookupViaJsonp(url: string, timeoutMs: number): Promise<LookupResult> {
-  return new Promise((resolve, reject) => {
-    const cb = `__rsvpLookup${jsonpCounter++}`;
-    const script = document.createElement('script');
-    const cleanup = () => {
-      delete (window as unknown as Record<string, unknown>)[cb];
-      script.remove();
-      clearTimeout(timer);
-    };
-    const timer = setTimeout(() => {
+function startJsonp(url: string, timeoutMs: number) {
+  const cb = `__rsvpLookup${jsonpCounter++}`;
+  const script = document.createElement('script');
+  let settled = false;
+  let timer: ReturnType<typeof setTimeout>;
+  const cleanup = () => {
+    delete (window as unknown as Record<string, unknown>)[cb];
+    script.remove();
+    clearTimeout(timer);
+  };
+  const promise = new Promise<LookupResult>((resolve, reject) => {
+    timer = setTimeout(() => {
+      if (settled) return;
+      settled = true;
       cleanup();
       reject(new Error('jsonp timeout'));
     }, timeoutMs);
     (window as unknown as Record<string, unknown>)[cb] = (data: LookupResult) => {
+      if (settled) return;
+      settled = true;
       cleanup();
       resolve(data);
     };
     script.onerror = () => {
+      if (settled) return;
+      settled = true;
       cleanup();
       reject(new Error('jsonp error'));
     };
     script.src = `${url}${url.includes('?') ? '&' : '?'}callback=${cb}`;
     document.body.appendChild(script);
   });
+  return {
+    promise,
+    cancel: () => {
+      if (settled) return;
+      settled = true;
+      cleanup();
+    },
+  };
 }
 
-// Look up a name: try a readable fetch GET first, fall back to JSONP.
+// Resolves with the first promise to succeed; rejects only if all of them fail.
+function firstSuccess<T>(promises: Promise<T>[]): Promise<T> {
+  return new Promise((resolve, reject) => {
+    let remaining = promises.length;
+    let lastError: unknown;
+    promises.forEach((p) => {
+      p.then(resolve).catch((err) => {
+        lastError = err;
+        remaining -= 1;
+        if (remaining === 0) reject(lastError);
+      });
+    });
+  });
+}
+
+// Look up a name: race a readable fetch GET against a JSONP request, and take
+// whichever answers first — instead of trying one, waiting for it to fail,
+// then starting the other.
 async function lookupGuest(
   first: string,
   last: string,
@@ -74,13 +110,23 @@ async function lookupGuest(
     lastName: last,
   });
   const url = `${GOOGLE_SCRIPT_URL}?${params.toString()}`;
-  try {
-    const res = await fetch(url, { method: 'GET', signal });
+
+  const fetchCtrl = new AbortController();
+  const onOuterAbort = () => fetchCtrl.abort();
+  signal.addEventListener('abort', onOuterAbort);
+
+  const fetchAttempt = fetch(url, { method: 'GET', signal: fetchCtrl.signal }).then((res) => {
     if (!res.ok) throw new Error(`status ${res.status}`);
-    return (await res.json()) as LookupResult;
-  } catch (err) {
-    if (signal.aborted) throw err;
-    return lookupViaJsonp(url, 6000);
+    return res.json() as Promise<LookupResult>;
+  });
+  const jsonp = startJsonp(url, 8000);
+
+  try {
+    return await firstSuccess([fetchAttempt, jsonp.promise]);
+  } finally {
+    fetchCtrl.abort();
+    jsonp.cancel();
+    signal.removeEventListener('abort', onOuterAbort);
   }
 }
 
@@ -218,7 +264,7 @@ export default function RSVPForm() {
       } catch {
         if (!ctrl.signal.aborted) setLookupStatus('error'); // fail-open: never block submit
       }
-    }, 500);
+    }, 350);
 
     return () => {
       clearTimeout(timer);
