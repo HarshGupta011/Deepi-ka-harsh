@@ -1,32 +1,17 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface EnvelopeIntroProps {
   onOpen: () => void;
-  videoSrc?: string;
 }
 
-export default function EnvelopeIntro({ onOpen, videoSrc = '/assets/intro-video.mp4' }: EnvelopeIntroProps) {
+export default function EnvelopeIntro({ onOpen }: EnvelopeIntroProps) {
   const [isOpening, setIsOpening] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
-  const [videoError, setVideoError] = useState(false);
-  const videoRef = useRef<HTMLVideoElement>(null);
 
   const handleClick = () => {
-    if (videoRef.current && !videoError) {
-      setIsOpening(true);
-      videoRef.current.play().catch(() => {
-        setVideoError(true);
-        handleEnvelopeAnimation();
-      });
-    } else {
-      handleEnvelopeAnimation();
-    }
-  };
-
-  const handleEnvelopeAnimation = () => {
     setIsOpening(true);
     setTimeout(() => {
       setIsVisible(false);
@@ -34,18 +19,6 @@ export default function EnvelopeIntro({ onOpen, videoSrc = '/assets/intro-video.
       setTimeout(onOpen, 200);
     }, 700);
   };
-
-  const handleVideoEnd = () => {
-    setIsVisible(false);
-    window.scrollTo(0, 0);
-    setTimeout(onOpen, 300);
-  };
-
-  useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.addEventListener('error', () => setVideoError(true));
-    }
-  }, []);
 
   // Hide scrollbar when envelope is visible
   useEffect(() => {
@@ -71,19 +44,6 @@ export default function EnvelopeIntro({ onOpen, videoSrc = '/assets/intro-video.
             backdropFilter: 'blur(8px)',
           }}
         >
-
-          {/* Video Layer */}
-          {!videoError && (
-            <video
-              ref={videoRef}
-              className="w-full h-full object-cover"
-              src={videoSrc}
-              playsInline
-              preload="auto"
-              onEnded={handleVideoEnd}
-              style={{ display: isOpening && !videoError ? 'block' : 'none' }}
-            />
-          )}
 
           {/* Full Screen Animated Envelope - Sliding Doors */}
           <div className="absolute inset-0 overflow-hidden">
@@ -245,27 +205,6 @@ export default function EnvelopeIntro({ onOpen, videoSrc = '/assets/intro-video.
                 style={{ background: '#7BA3B5' }}
               />
             </motion.div>
-          )}
-
-          {/* Mute button for video */}
-          {isOpening && !videoError && (
-            <button
-              className="fixed bottom-6 right-6 z-50 p-3 rounded-full shadow-soft hover:opacity-90 transition-all"
-              style={{
-                background: '#7BA3B5',
-                color: '#FFFEF9',
-              }}
-              onClick={(e) => {
-                e.stopPropagation();
-                if (videoRef.current) {
-                  videoRef.current.muted = !videoRef.current.muted;
-                }
-              }}
-            >
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.536 8.464a5 5 0 010 7.072M12 6l-4 4H4v4h4l4 4V6z" />
-              </svg>
-            </button>
           )}
         </motion.div>
       )}

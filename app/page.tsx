@@ -11,7 +11,7 @@ import HeroSlideshow from '@/components/HeroSlideshow';
 import Countdown from '@/components/Countdown';
 
 const explorePages = [
-  { href: '/our-story', label: 'Our Story', teaser: 'How two Bangalore kids ended up here', icon: Heart },
+  { href: '/our-story', label: 'Our Story', teaser: 'How it all began', icon: Heart },
   { href: '/events', label: 'Events', teaser: 'Five days, two cities, one big party', icon: CalendarDays },
   { href: '/travel', label: 'Travel & Stay', teaser: 'Getting here, where to stay, India tips', icon: Plane },
   { href: '/things-to-do', label: 'Things to Do', teaser: 'Our favourite eats and sights in both cities', icon: Compass },
@@ -26,10 +26,7 @@ export default function Home() {
     <>
       {/* Envelope Intro */}
       {!isOpen && (
-        <EnvelopeIntro
-          onOpen={() => setIsOpen(true)}
-          videoSrc="/assets/intro-video.mp4"
-        />
+        <EnvelopeIntro onOpen={() => setIsOpen(true)} />
       )}
 
       {/* Main Content (Home Page) */}

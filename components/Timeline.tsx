@@ -10,6 +10,7 @@ interface TimelineEvent {
   description: string;
   image?: string;
   imagePosition?: string;
+  imageCaption?: string;
 }
 
 interface TimelineProps {
@@ -90,6 +91,14 @@ export default function Timeline({ events }: TimelineProps) {
                     className="object-cover"
                     style={{ objectPosition: event.imagePosition || 'center' }}
                   />
+                  {event.imageCaption && (
+                    <div
+                      className="absolute inset-x-0 bottom-0 px-4 py-3"
+                      style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.55), transparent)' }}
+                    >
+                      <p className="text-xs italic tracking-wide text-white/90">{event.imageCaption}</p>
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -123,6 +132,14 @@ export default function Timeline({ events }: TimelineProps) {
                         className="object-cover"
                         style={{ objectPosition: event.imagePosition || 'center' }}
                       />
+                      {event.imageCaption && (
+                        <div
+                          className="absolute inset-x-0 bottom-0 px-5 py-4"
+                          style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.55), transparent)' }}
+                        >
+                          <p className="text-sm italic tracking-wide text-white/90">{event.imageCaption}</p>
+                        </div>
+                      )}
                     </motion.div>
                   )
                 ) : (
@@ -183,6 +200,14 @@ export default function Timeline({ events }: TimelineProps) {
                         className="object-cover"
                         style={{ objectPosition: event.imagePosition || 'center' }}
                       />
+                      {event.imageCaption && (
+                        <div
+                          className="absolute inset-x-0 bottom-0 px-5 py-4"
+                          style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.55), transparent)' }}
+                        >
+                          <p className="text-sm italic tracking-wide text-white/90">{event.imageCaption}</p>
+                        </div>
+                      )}
                     </motion.div>
                   )
                 )}

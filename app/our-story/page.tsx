@@ -14,6 +14,7 @@ const timelineEvents = [
       "Deepika, a Bangalore girl. Harsh, straight out of Kolkata.\n\nWe met during undergrad in Bangalore, where it all started with friendship, group projects, random conversations, and spending way too much time together “just as friends.”",
     image: '/images/first-meeting.png',
     imagePosition: 'center top',
+    imageCaption: 'Our first photo together 📸',
   },
   {
     date: '2018',
@@ -22,6 +23,7 @@ const timelineEvents = [
       "What started as an easy friendship slowly turned into late-night calls, inside jokes, constant food plans, and becoming each other’s favorite person.\n\nTurns out the most important thing we took away from college wasn’t the degree.",
     image: '/images/gallery/d570c152-af13-4e3f-9394-690f0e7c7c9b_Original.jpg',
     imagePosition: 'center bottom',
+    imageCaption: 'Our first date 💕',
   },
   {
     date: '2021 – 2022',

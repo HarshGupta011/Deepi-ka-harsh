@@ -10,7 +10,7 @@ A responsive wedding website built with Next.js 14 and Framer Motion.
 - **Styling:** Tailwind CSS + custom utilities in `app/globals.css`
 - **Animations:** Framer Motion
 - **Icons:** Lucide React
-- **Data:** RSVP → Google Sheets (Apps Script); Guest recommendations → Supabase (optional)
+- **Data:** RSVP + guest recommendations → Google Sheets (Apps Script)
 
 ## Pages
 
@@ -18,7 +18,7 @@ A responsive wedding website built with Next.js 14 and Framer Motion.
 - `/our-story` — Story timeline (alternating columns on desktop, left-rail layout on mobile)
 - `/events` — Events & schedule (tap-to-flip cards)
 - `/travel` — Travel & stay
-- `/things-to-do` — Curated tips + guest recommendations feed (Supabase)
+- `/things-to-do` — Curated tips + guest recommendations feed (Google Sheets)
 - `/rsvp` — RSVP form (writes to a Google Sheet)
 - `/gallery` — Photo gallery
 - `/registry` — Registry
@@ -39,17 +39,15 @@ Create `.env.local` (gitignored). All are `NEXT_PUBLIC_` so they are inlined at 
 
 | Variable | Purpose | Required? |
 |----------|---------|-----------|
-| `NEXT_PUBLIC_GOOGLE_SCRIPT_URL` | RSVP submissions → Google Sheet | No — a working default is committed in `components/RSVPForm.tsx` |
-| `NEXT_PUBLIC_SUPABASE_URL` | Supabase project URL (guest recommendations) | Only to enable recommendations |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase anon/public key | Only to enable recommendations |
+| `NEXT_PUBLIC_GOOGLE_SCRIPT_URL` | RSVP + recommendations → Google Sheet | No — a working default is committed in `components/RSVPForm.tsx` / `lib/recommendations.ts` |
 
 ## RSVP backend
 
-The form (`components/RSVPForm.tsx`) POSTs each submission (`mode: 'no-cors'`) to a Google Apps Script web app that appends a row to a Google Sheet — free, no server. The `/exec` URL is the committed default; the env var overrides it. The Apps Script source lives in the deployment plan.
+The form (`components/RSVPForm.tsx`) POSTs each submission (`mode: 'no-cors'`) to a Google Apps Script web app that appends a row to a Google Sheet — free, no server. The `/exec` URL is the committed default; the env var overrides it. The Apps Script source is committed at `apps-script/Code.gs`.
 
-## Guest recommendations (optional)
+## Guest recommendations
 
-`/things-to-do` includes a Supabase-backed recommendations feed (`components/Recommendations.tsx`). Without Supabase env vars it shows a "warming up" placeholder. To enable: create a free Supabase project, run `supabase/schema.sql` (creates `recommendations` + `replies` tables with public read/insert RLS), and set the two Supabase env vars.
+`/things-to-do` includes a recommendations feed (`components/Recommendations.tsx`, `lib/recommendations.ts`) backed by the **same** Google Apps Script deployment as RSVP, using dedicated "Recommendations" and "Replies" tabs (auto-created on first submission). No separate service or env vars — unlike a database-as-a-service, a Google Sheet never gets suspended for inactivity.
 
 ## Deployment
 

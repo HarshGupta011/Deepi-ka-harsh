@@ -1,14 +1,14 @@
 /**
- * RSVP backend for the Deepika & Harsh wedding site.
+ * RSVP + guest-recommendations backend for the Deepika & Harsh wedding site.
  *
  * THIS FILE IS VERSION CONTROL ONLY. Apps Script does not pull from this repo.
  * To apply changes: open the Apps Script editor bound to the RSVP Google Sheet,
  * paste this file over Code.gs, then Deploy > Manage deployments > (edit the
  * existing web app) > New version. Re-deploying as a NEW VERSION of the SAME
  * deployment keeps the /exec URL stable so the committed default in
- * components/RSVPForm.tsx keeps working.
+ * components/RSVPForm.tsx and lib/recommendations.ts keeps working.
  *
- * Sheet model (two tabs):
+ * Sheet model:
  *  - responses tab (named "RSVPs" / "Responses" / whatever): one row per
  *    submission. The script matches values to columns BY HEADER NAME (row 1),
  *    so the column order can be anything. Recognized headers (case/space/
@@ -17,10 +17,20 @@
  *    (nameKey is an optional helper column holding the normalized name.)
  *  - "InviteList": the allow-list. Headers: First Name, Last Name, Allowed Events.
  *    Allowed Events is a comma-separated list of event ids, or "ALL".
+ *  - "Recommendations": guest-submitted recommendations. Headers: id, city,
+ *    title, body, author_name, created_at. Created automatically on first
+ *    submission if missing.
+ *  - "Replies": replies to recommendations. Headers: id, recommendation_id,
+ *    body, author_name, created_at. Created automatically on first submission
+ *    if missing.
  */
 
 var RESPONSES_SHEET_NAMES = ['RSVPs', 'Responses'];
 var INVITE_SHEET = 'InviteList';
+var RECOMMENDATIONS_SHEET = 'Recommendations';
+var REPLIES_SHEET = 'Replies';
+var RECOMMENDATIONS_HEADER = ['id', 'city', 'title', 'body', 'author_name', 'created_at'];
+var REPLIES_HEADER = ['id', 'recommendation_id', 'body', 'author_name', 'created_at'];
 
 function ALL_EVENT_IDS() {
   return ['cocktail', 'reception', 'mehendi', 'haldi', 'yaar-di-shaadi'];
@@ -93,6 +103,34 @@ function normalizeName(first, last) {
     .toLowerCase()
     .trim()
     .replace(/\s+/g, ' ');
+}
+
+/** Gets (creating + header-seeding if needed) a tab by name. */
+function getOrCreateSheet(name, header) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var s = ss.getSheetByName(name);
+  if (!s) {
+    s = ss.insertSheet(name);
+    s.appendRow(header);
+  }
+  return s;
+}
+
+/** Reads a header-mapped sheet into an array of plain objects. */
+function readSheetAsObjects(sheet, header) {
+  if (!sheet || sheet.getLastRow() < 2) return [];
+  var rows = sheet.getDataRange().getValues();
+  var m = headerMap(rows[0]);
+  var out = [];
+  for (var i = 1; i < rows.length; i++) {
+    var obj = {};
+    for (var c = 0; c < header.length; c++) {
+      var idx = m.hasOwnProperty(headerKey(header[c])) ? m[headerKey(header[c])] : c;
+      obj[header[c]] = rows[i][idx];
+    }
+    out.push(obj);
+  }
+  return out;
 }
 
 /** JSONP-aware responder shared by doGet/doPost. */
@@ -175,6 +213,14 @@ function doGet(e) {
     }
   }
 
+  if (p.action === 'listRecommendations') {
+    var recSheet = getOrCreateSheet(RECOMMENDATIONS_SHEET, RECOMMENDATIONS_HEADER);
+    var replySheet = getOrCreateSheet(REPLIES_SHEET, REPLIES_HEADER);
+    out.recommendations = readSheetAsObjects(recSheet, RECOMMENDATIONS_HEADER)
+      .sort(function (a, b) { return new Date(b.created_at) - new Date(a.created_at); });
+    out.replies = readSheetAsObjects(replySheet, REPLIES_HEADER);
+  }
+
   return respond(out, p.callback);
 }
 
@@ -215,6 +261,32 @@ function doPost(e) {
   lock.waitLock(10000);
   try {
     var data = JSON.parse(e.postData.contents);
+
+    if (data.type === 'recommendation') {
+      var recSheet = getOrCreateSheet(RECOMMENDATIONS_SHEET, RECOMMENDATIONS_HEADER);
+      recSheet.appendRow([
+        Utilities.getUuid(),
+        data.city,
+        data.title,
+        data.body,
+        data.author_name,
+        new Date().toISOString()
+      ]);
+      return respond({ ok: true }, e.parameter && e.parameter.callback);
+    }
+
+    if (data.type === 'reply') {
+      var replySheet = getOrCreateSheet(REPLIES_SHEET, REPLIES_HEADER);
+      replySheet.appendRow([
+        Utilities.getUuid(),
+        data.recommendation_id,
+        data.body,
+        data.author_name,
+        new Date().toISOString()
+      ]);
+      return respond({ ok: true }, e.parameter && e.parameter.callback);
+    }
+
     var key = normalizeName(data.firstName, data.lastName);
     var sheet = getResponsesSheet();
 

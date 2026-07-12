@@ -521,7 +521,7 @@ export default function EventsPage() {
             Our Celebrations
           </h1>
           <p className="text-lg max-w-2xl mx-auto" style={{ color: '#6B6B6B' }}>
-            Five beautiful days of love, traditions, and togetherness. Tap each card to discover the details.
+            Four beautiful days of love, traditions, and togetherness. Tap each card to discover the details.
           </p>
         </motion.div>
 

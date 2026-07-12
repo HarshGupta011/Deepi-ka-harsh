@@ -255,13 +255,6 @@ export default function ThingsToDoPage() {
                   </motion.div>
                 ))}
               </div>
-              <p
-                className="text-sm md:text-base text-center mt-6 italic"
-                style={{ color: '#6B6B6B' }}
-              >
-                The list doesn&apos;t end here — there&apos;s plenty more. Hope you have
-                time to explore the city.
-              </p>
             </div>
 
             {/* Kolkata */}

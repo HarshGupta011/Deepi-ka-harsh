@@ -4,11 +4,12 @@ import { useEffect, useState, useCallback, FormEvent } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MessageCircle, Send, MapPin, Sparkles } from 'lucide-react';
 import {
-  supabase,
-  isSupabaseConfigured,
+  fetchRecommendations,
+  postRecommendation,
+  postReply,
   Recommendation,
   Reply,
-} from '@/lib/supabase';
+} from '@/lib/recommendations';
 
 type CityFilter = 'all' | 'bangalore' | 'kolkata' | 'general';
 
@@ -54,33 +55,23 @@ export default function Recommendations() {
   const [submitError, setSubmitError] = useState<string | null>(null);
 
   const fetchAll = useCallback(async () => {
-    if (!supabase) return;
     setLoading(true);
-    const { data: recsData } = await supabase
-      .from('recommendations')
-      .select('*')
-      .order('created_at', { ascending: false })
-      .limit(200);
-    const { data: repliesData } = await supabase
-      .from('replies')
-      .select('*')
-      .order('created_at', { ascending: true });
-
-    setRecs((recsData as Recommendation[]) ?? []);
-    const grouped: Record<string, Reply[]> = {};
-    (repliesData as Reply[] | null)?.forEach((r) => {
-      if (!grouped[r.recommendation_id]) grouped[r.recommendation_id] = [];
-      grouped[r.recommendation_id].push(r);
-    });
-    setReplies(grouped);
+    try {
+      const { recommendations, replies: repliesData } = await fetchRecommendations();
+      setRecs(recommendations ?? []);
+      const grouped: Record<string, Reply[]> = {};
+      (repliesData ?? []).forEach((r) => {
+        if (!grouped[r.recommendation_id]) grouped[r.recommendation_id] = [];
+        grouped[r.recommendation_id].push(r);
+      });
+      setReplies(grouped);
+    } catch {
+      // leave existing state; the list below falls back to an empty state
+    }
     setLoading(false);
   }, []);
 
   useEffect(() => {
-    if (!isSupabaseConfigured) {
-      setLoading(false);
-      return;
-    }
     fetchAll();
   }, [fetchAll]);
 
@@ -88,7 +79,6 @@ export default function Recommendations() {
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    if (!supabase) return;
     setSubmitError(null);
 
     const cleanName = name.trim();
@@ -100,36 +90,20 @@ export default function Recommendations() {
     }
 
     setSubmitting(true);
-    const { error } = await supabase.from('recommendations').insert({
-      city,
-      title: cleanTitle,
-      body: cleanBody,
-      author_name: cleanName,
-    });
-    setSubmitting(false);
-
-    if (error) {
-      setSubmitError(error.message);
-      return;
+    try {
+      await postRecommendation({
+        city,
+        title: cleanTitle,
+        body: cleanBody,
+        author_name: cleanName,
+      });
+      setTitle('');
+      setBody('');
+      await fetchAll();
+    } catch {
+      setSubmitError('Something went wrong posting your recommendation. Please try again.');
     }
-    setTitle('');
-    setBody('');
-    fetchAll();
-  }
-
-  if (!isSupabaseConfigured) {
-    return (
-      <div className="max-w-2xl mx-auto rounded-2xl p-8 card-elegant text-center">
-        <Sparkles className="w-8 h-8 mx-auto mb-3" style={{ color: '#9CAF88' }} />
-        <h3 className="font-serif text-xl mb-2" style={{ color: '#3D3D3D' }}>
-          Guest recommendations are warming up
-        </h3>
-        <p style={{ color: '#6B6B6B' }}>
-          This space will soon let guests share their favourite spots and reply to
-          each other. Check back shortly!
-        </p>
-      </div>
-    );
+    setSubmitting(false);
   }
 
   return (
@@ -366,7 +340,6 @@ function ReplyForm({
 
   async function submit(e: FormEvent) {
     e.preventDefault();
-    if (!supabase) return;
     setError(null);
 
     const cleanName = name.trim();
@@ -377,18 +350,17 @@ function ReplyForm({
     }
 
     setPosting(true);
-    const { error: insertError } = await supabase.from('replies').insert({
-      recommendation_id: recommendationId,
-      body: cleanBody,
-      author_name: cleanName,
-    });
-    setPosting(false);
-
-    if (insertError) {
-      setError(insertError.message);
-      return;
+    try {
+      await postReply({
+        recommendation_id: recommendationId,
+        body: cleanBody,
+        author_name: cleanName,
+      });
+      onPosted();
+    } catch {
+      setError('Something went wrong posting your reply. Please try again.');
     }
-    onPosted();
+    setPosting(false);
   }
 
   return (
