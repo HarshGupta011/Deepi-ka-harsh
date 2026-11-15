@@ -47,7 +47,7 @@ const events: EventType[] = [
   {
     id: 1,
     name: 'The Prequel',
-    date: 'December 5th',
+    date: 'December 4th',
     time: '8:00 PM - 11:00 PM',
     timeNote: 'Arrival: 7:30 - 8 PM. Account for Bangalore traffic & arrive on time!',
     ageRestriction: '21+ only',
@@ -65,8 +65,8 @@ const events: EventType[] = [
       title: 'Deepika & Harsh - The Prequel (Cocktail)',
       description: 'Cocktail celebration for Deepika & Harsh wedding. Arrival window: 7:30-8PM. Doors close after 8PM.',
       location: 'Gatsby, Survey No.2&3, Bannerghatta Rd, Arekere, Bengaluru, Karnataka 560076',
-      startDate: '2026-12-05T19:30:00+05:30',
-      endDate: '2026-12-05T23:00:00+05:30',
+      startDate: '2026-12-04T19:30:00+05:30',
+      endDate: '2026-12-04T23:00:00+05:30',
     },
   },
   {
